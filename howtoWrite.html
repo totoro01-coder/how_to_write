@@ -1,0 +1,2029 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>읽는 방</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 읽는 방: 하얀 종이에 별색 평면 도형, 가는 괘선, 담백한 글자 (한글은 Noto Sans KR 하나).
+   인물=금 · 사건=주황 · 배경=초록이 카드, 칸, 쌓은 이야기 전부에서 같은 뜻으로 쓰여요. UI 포인트는 파랑, 흔적은 보라.
+   그림 안의 색(--gx-*)은 라이트/다크에서 같아요. 인쇄된 카드처럼. */
+:root{
+  --bg:#FFFFFF; --surface:#F5F6F6; --surface-2:#E8EBEC; --table:#F0F2F2; --ink:#16181B; --ink-2:#464C52; --ink-3:#656B72;
+  --line:#D3D7DA; --line-strong:#A9AFB4; --rule:#16181B;
+  --accent:#0B6FA6; --accent-ink:#FFFFFF; --accent-soft:#DDEEF8;
+  --sp0:#86600F; --sp1:#AE510A; --sp2:#1B7437;
+  --sp0-t:#F5EAD0; --sp1-t:#FBE5D3; --sp2-t:#D9EEDF;
+  --bad:#B3341E; --bad-t:#FADDD6; --good:#1B7437; --good-t:#D9EEDF; --trace:#5A3EB3; --trace-t:#E8E1F7;
+  --scrim:rgba(16,18,20,.5); --dist-field:#15171A;
+  --gx-ink:#15171A; --gx-paper:#FFFFFF; --gx-gold:#C08F2B; --gx-orange:#F07C28; --gx-green:#2E9B4F;
+  --gx-blue:#2AABE2; --gx-yellow:#F5CE26; --gx-purple:#7B5BD0; --gx-red:#E4472C;
+  --back:radial-gradient(rgba(255,255,255,.26) 1.1px, transparent 1.5px) 0 0/6px 6px, #15171A;
+  --font-body:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D0E10; --surface:#16181B; --surface-2:#202327; --table:#17191C; --ink:#EEF0F1; --ink-2:#B4B9BE; --ink-3:#8D9399;
+    --line:#30343A; --line-strong:#5B6168; --rule:#EEF0F1;
+    --accent:#5DBDEB; --accent-ink:#06202F; --accent-soft:#16303F;
+    --sp0:#E4B552; --sp1:#F59D58; --sp2:#62C47F;
+    --sp0-t:#2D2512; --sp1-t:#33200F; --sp2-t:#12281A;
+    --bad:#F28B76; --bad-t:#3A1F19; --good:#62C47F; --good-t:#12281A; --trace:#B39DF2; --trace-t:#271F42;
+    --scrim:rgba(0,0,0,.66); --dist-field:#2B3038;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D0E10; --surface:#16181B; --surface-2:#202327; --table:#17191C; --ink:#EEF0F1; --ink-2:#B4B9BE; --ink-3:#8D9399;
+  --line:#30343A; --line-strong:#5B6168; --rule:#EEF0F1;
+  --accent:#5DBDEB; --accent-ink:#06202F; --accent-soft:#16303F;
+  --sp0:#E4B552; --sp1:#F59D58; --sp2:#62C47F;
+  --sp0-t:#2D2512; --sp1-t:#33200F; --sp2-t:#12281A;
+  --bad:#F28B76; --bad-t:#3A1F19; --good:#62C47F; --good-t:#12281A; --trace:#B39DF2; --trace-t:#271F42;
+  --scrim:rgba(0,0,0,.66); --dist-field:#2B3038;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.6;
+  padding-block:18px 72px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+html.lock{overflow:hidden}
+.wrap{max-width:1040px; margin:0 auto}
+h1,h2,h3{font-weight:700; margin:0; text-wrap:balance}
+h2{font-size:20px; letter-spacing:-0.02em}
+h3{font-size:14.5px}
+p{margin:0}
+.help{color:var(--ink-2); font-size:13.5px; max-width:62ch; margin-top:5px; word-break:keep-all}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+[hidden]{display:none!important}
+
+/* 그림 공통 */
+.gx{display:block; max-width:100%}
+.k-fg{fill:var(--ink)} .s-fg{stroke:var(--ink)} .k-dist{fill:var(--dist-field)} .k-ink{fill:var(--gx-ink)} .k-paper{fill:var(--gx-paper)} .k-gold{fill:var(--gx-gold)} .k-orange{fill:var(--gx-orange)}
+.k-green{fill:var(--gx-green)} .k-blue{fill:var(--gx-blue)} .k-yellow{fill:var(--gx-yellow)} .k-purple{fill:var(--gx-purple)} .k-red{fill:var(--gx-red)}
+.s-line{fill:none; stroke:var(--gx-paper); stroke-width:4; stroke-linecap:round; stroke-linejoin:round}
+.s-ink{stroke:var(--gx-ink); stroke-width:2}
+.gl-ink{fill:var(--ink)} .gl-bg{fill:var(--bg)} .gl-line{stroke:var(--ink); stroke-width:1.8}
+.g-ent{display:inline-block; vertical-align:-3px; flex:none}
+
+/* 버튼과 입력 */
+.btn{background:var(--accent); color:var(--accent-ink); border:1px solid var(--accent); border-radius:999px; padding:9px 22px; font-weight:600; cursor:pointer}
+.btn:disabled{opacity:.4; cursor:not-allowed}
+.btn.ghost{background:transparent; color:var(--ink); border-color:var(--ink-3)}
+.btn.sm{padding:4px 14px; font-size:13px; font-weight:500}
+.btn.big{padding:13px 34px; font-size:17px}
+.btnrow{display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:14px; align-items:center}
+input.txt,textarea{background:transparent; color:var(--ink); border:0; border-bottom:1px solid var(--ink-3); border-radius:0; padding:4px 2px; font:inherit; min-width:0}
+input.txt{width:100%}
+input.txt:focus-visible,textarea:focus-visible{outline:none; border-bottom-color:var(--accent); box-shadow:0 1px 0 var(--accent)}
+textarea{width:100%; min-height:120px; font-size:13px; border:1px solid var(--line-strong); padding:8px}
+.toggle{display:inline-flex; gap:8px; align-items:center; font-size:14px; cursor:pointer}
+.toggle input{width:16px; height:16px; accent-color:var(--accent)}
+.sq{display:inline-block; width:10px; height:10px; margin-right:7px; vertical-align:baseline}
+.sp0c{background:var(--sp0)} .sp1c{background:var(--sp1)} .sp2c{background:var(--sp2)}
+
+/* 위쪽 줄 */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--rule)}
+.brand{display:inline-flex; align-items:center; gap:10px; font-weight:700; font-size:19px; letter-spacing:-0.03em}
+.brand .mk{display:inline-flex; gap:3px}
+.brand .mk i{width:9px; height:15px; border-radius:2px; display:block}
+.brand .mk i:nth-child(1){background:var(--gx-gold)} .brand .mk i:nth-child(2){background:var(--gx-orange)} .brand .mk i:nth-child(3){background:var(--gx-green)}
+.bar nav{display:flex; gap:8px}
+
+/* 제목 화면 */
+.hero{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,460px); gap:20px 40px; align-items:center; padding:34px 0 8px}
+.hero h1{font-size:clamp(56px,10vw,96px); letter-spacing:-0.06em; line-height:1}
+.lead{font-size:17px; max-width:27ch; margin-top:20px; color:var(--ink-2); word-break:keep-all; line-height:1.7}
+.hero .btnrow{margin-top:26px}
+.hero .resume{font-size:13px; color:var(--ink-2)}
+.fan{display:flex; justify-content:center; padding:24px 0 8px}
+.fcard{position:relative; width:32%; max-width:172px; margin-inline:-0.5%; border:1px solid var(--line-strong); border-radius:14px; background:var(--bg); padding:7px; display:flex; flex-direction:column; gap:6px; box-shadow:0 8px 0 -4px var(--surface-2)}
+.fcard .gx{width:100%; height:auto}
+.fcard span{font-size:12.5px; font-weight:600; padding:0 2px 2px}
+.fcard{transform:translateY(var(--ty,0px)) rotate(var(--r,0deg))}
+.fcard:nth-child(1){--r:-6deg; --ty:8px} .fcard:nth-child(2){--r:0deg; --ty:-6px; z-index:2} .fcard:nth-child(3){--r:6deg; --ty:8px}
+.how{margin-top:44px; border-top:1px solid var(--rule); list-style:none; padding:0}
+.how li{display:grid; grid-template-columns:128px minmax(0,1fr); gap:6px 22px; padding:18px 0; border-bottom:1px solid var(--line); align-items:center}
+.how li .gx{width:100%; height:auto}
+.how .art{display:flex; gap:6px}
+.how .art .gx{flex:1; min-width:0}
+.how .art.col{flex-direction:column; justify-content:center}
+.how .art.col .gx{flex:none}
+.how h3{font-size:16.5px; letter-spacing:-0.02em}
+.how p{font-size:14px; color:var(--ink-2); max-width:58ch; margin-top:4px; word-break:keep-all}
+.how p b{color:var(--ink)}
+details.rulebox,details.seedbox{margin-top:22px; border-top:1px solid var(--rule); border-bottom:1px solid var(--line); padding:2px 0 14px}
+details > summary{cursor:pointer; font-weight:600; padding:10px 0}
+details.seedbox .btnrow{margin-top:8px}
+
+/* 규칙 설명 */
+.rules-body h3{font-size:14.5px; margin-top:16px}
+.rules-body p{font-size:14px; color:var(--ink-2); max-width:66ch; margin-top:6px; word-break:keep-all}
+.rules-body ul{margin:6px 0 0; padding-left:1.2em; font-size:14px; color:var(--ink-2); max-width:66ch}
+.rules-body li{margin-bottom:4px; word-break:keep-all}
+.rules-body b{color:var(--ink)}
+
+/* 장르·설정 고르기 */
+.step{padding-top:26px}
+.step .btnrow{margin-top:20px}
+.genre-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:20px}
+.genre{position:relative; width:212px; border:1px solid var(--line-strong); border-radius:14px; background:var(--bg); padding:10px 14px 14px; text-align:left; cursor:pointer; display:flex; flex-direction:column; gap:6px}
+.genre .gx{width:100%; height:100px; margin:6px 0}
+.genre b{font-size:24px; font-weight:700; letter-spacing:-0.03em; display:block}
+.genre .gi{display:block; font-size:12.5px; color:var(--ink-2); line-height:1.5; word-break:keep-all}
+.genre:hover{border-color:var(--ink)}
+.setting-row{display:flex; flex-wrap:wrap; gap:16px; margin-top:20px}
+.setting{position:relative; width:268px; border:1px solid var(--line-strong); border-radius:14px; background:var(--bg); padding:13px 15px 15px; text-align:left; cursor:pointer}
+.setting:hover{border-color:var(--ink)}
+.setting[aria-pressed="true"]{border-color:var(--accent); outline:2px solid var(--accent); outline-offset:1px; background:var(--accent-soft)}
+.setting b{font-size:16px; font-weight:700; letter-spacing:-0.02em; display:block; margin-bottom:8px; line-height:1.4}
+.setting span{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-2); line-height:1.5; padding:2px 0}
+.setting span em{font-style:normal; color:var(--ink); font-weight:700; display:inline-flex; align-items:center; gap:4px; min-width:2.7em}
+.names{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px 20px; margin-top:22px; max-width:780px}
+.names label{font-size:13px; color:var(--ink-2); display:block}
+.names input{margin-top:2px}
+
+/* 점수·덱 */
+.status{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 30px; margin-top:20px}
+.stat .k{font-size:12.5px; color:var(--ink-3); display:flex; justify-content:space-between}
+.stat .v{font-size:26px; font-weight:700; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1.25}
+.stat .v.sm{font-size:20px}
+.meter{height:10px; background:var(--surface-2); margin-top:5px; position:relative; overflow:hidden}
+.meter > i{display:block; height:100%; background:var(--accent)}
+.meter.deck > i{background:var(--ink)}
+.meter::after{content:""; position:absolute; inset:0; background:repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), var(--bg) calc(10% - 2px) 10%)}
+.cast{margin-top:18px; padding:10px 0 12px; border-top:1px solid var(--rule); border-bottom:1px solid var(--line)}
+.cast .premise{font-weight:700; font-size:17px; letter-spacing:-0.02em}
+.cast-items{display:flex; flex-wrap:wrap; gap:6px 24px; margin-top:8px; font-size:13.5px; color:var(--ink-2)}
+.cast-items > span{display:inline-flex; align-items:center; gap:6px}
+.cast-items b{font-size:14px; color:var(--ink); font-weight:700}
+.cast-items .nm{color:var(--ink); font-weight:600}
+
+/* 탁자: 덱과 버린 카드, 지금 자리, 쌓은 이야기 */
+.table{display:grid; grid-template-columns:auto 236px minmax(0,1fr); gap:16px 26px; background:var(--table); border-radius:18px; padding:18px; margin-top:20px; align-items:start}
+.piles{display:flex; gap:14px; align-items:flex-start}
+.pile{position:relative; width:78px; height:108px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; isolation:isolate}
+.pile b{font-size:25px; font-weight:700; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1}
+.pile span{font-size:11.5px; margin-top:5px}
+.pile.deck{background:var(--back); color:#fff; box-shadow:inset 0 0 0 4px var(--gx-ink), inset 0 0 0 5px rgba(255,255,255,.45)}
+.pile.deck::before,.pile.deck::after{content:""; position:absolute; inset:0; border-radius:12px; background:var(--gx-ink); z-index:-1; border:1px solid rgba(255,255,255,.3)}
+.pile.deck::before{transform:translate(3px,3px)} .pile.deck::after{transform:translate(6px,6px)}
+.pile.deck b,.pile.deck span{background:var(--gx-ink); padding:2px 8px; border-radius:6px}
+.pile.deck.low b{color:#FFB4A6}
+.pile.out{border:1.5px dashed var(--line-strong); color:var(--ink-2)}
+.pile.out.some{border-style:solid; background:var(--bg)}
+.seat-slot .zt,.strip .zt{font-size:13px; font-weight:700; margin-bottom:8px}
+.seatcard{width:100%; max-width:236px; border:1px solid var(--line-strong); border-radius:14px; background:var(--bg); padding:8px; display:flex; flex-direction:column; gap:4px}
+.seatcard .gx{width:100%; height:auto; margin-bottom:4px}
+.seatcard .nm{font-size:17px; letter-spacing:-0.02em; font-weight:700}
+.seatcard .ln{font-size:12.5px}
+.seatcard.sp0 .ln{color:var(--sp0)} .seatcard.sp1 .ln{color:var(--sp1)} .seatcard.sp2 .ln{color:var(--sp2)}
+.seatcard .reads{display:flex; align-items:center; gap:3px; font-size:12px; color:var(--ink-2); margin-top:2px}
+.seatcard .reads i{width:10px; height:10px; border:1.5px solid currentColor; display:block}
+.seatcard .reads i.on{background:currentColor}
+.seatcard .reads i.over{background:var(--bad); border-color:var(--bad)}
+.seatcard .reads span{margin-left:6px}
+.seatcard.ghost{border:1.5px dashed var(--line-strong); background:transparent; min-height:156px; align-items:center; justify-content:center; text-align:center; color:var(--ink-3); font-size:13.5px}
+.seat-slot .pp{font-size:12.5px; color:var(--ink-2); margin-top:8px; max-width:236px; word-break:keep-all}
+.seat-slot .full{font-size:12.5px; color:var(--bad); font-weight:600; margin-top:6px; max-width:236px; word-break:keep-all}
+.chip{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--line-strong); border-radius:999px; padding:2px 11px; font-size:13px; background:var(--bg)}
+.chip.trace{border-color:var(--trace); background:var(--trace-t); color:var(--trace); font-weight:600}
+.trace-note{font-size:12.5px; color:var(--ink-2); margin-top:6px; max-width:62ch; word-break:keep-all}
+.seat-slot .trace-note{max-width:236px}
+.strip-head{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
+.strip-head .zt{margin:0}
+.strip .empty{color:var(--ink-2); font-size:13.5px; margin-top:12px; max-width:44ch; word-break:keep-all}
+.slotrow{display:flex; flex-wrap:wrap; gap:6px 22px; margin:0 0 12px; align-items:center}
+.slot{display:inline-flex; align-items:center; gap:8px; font-size:13px}
+.slot .dots{display:inline-flex; gap:3px}
+.slot .dots i{width:12px; height:12px; border:1.5px solid currentColor; display:block}
+.slot .dots i.on{background:currentColor}
+.slot.t0{color:var(--sp0)} .slot.t1{color:var(--sp1)} .slot.t2{color:var(--sp2)}
+.slot .lab{color:var(--ink); font-weight:600}
+.slot .cnt{color:var(--ink-3); font-variant-numeric:tabular-nums}
+.slot.full .cnt{color:var(--bad); font-weight:600}
+.minis{display:flex; flex-wrap:wrap; gap:10px}
+.mini{position:relative; width:118px; border:1px solid var(--line-strong); border-radius:12px; background:var(--bg); padding:6px; display:flex; flex-direction:column; gap:4px; text-align:left; cursor:pointer}
+.mini:hover{border-color:var(--ink)}
+.mini .gx{width:100%; height:auto}
+.mini .m-top{display:flex; align-items:baseline; gap:6px; font-size:12px}
+.mini .m-no{font-weight:700; font-size:14px; font-variant-numeric:tabular-nums}
+.mini.sp0 .m-no,.mini.sp0 .m-t{color:var(--sp0)} .mini.sp1 .m-no,.mini.sp1 .m-t{color:var(--sp1)} .mini.sp2 .m-no,.mini.sp2 .m-t{color:var(--sp2)}
+.mini .m-f{font-size:11.5px; color:var(--ink-2)}
+.mini .m-tags{display:flex; flex-wrap:wrap; gap:4px}
+.tag{padding:0 8px; border-radius:999px; font-size:11px; font-weight:600; line-height:1.6}
+.tag.br{background:var(--surface-2); color:var(--ink-2)}
+.tag.tr{background:var(--trace-t); color:var(--trace)}
+.tag.bad{background:var(--bad-t); color:var(--bad)}
+
+/* 손패와 카드 */
+.handzone{margin-top:26px}
+.handzone .zt{font-size:14px; font-weight:700; padding-bottom:6px; border-bottom:1px solid var(--line); margin-bottom:14px}
+.hand{display:flex; flex-wrap:wrap; gap:12px}
+.card{
+  position:relative; width:112px; border:1px solid var(--line-strong); border-radius:14px; background:var(--bg);
+  display:flex; flex-direction:column; gap:7px; padding:8px; text-align:left; cursor:pointer;
+  transition:transform .14s ease, border-color .14s ease;
+}
+.card:hover{border-color:var(--ink)}
+.card .c-top{font-size:12px; line-height:1.35}
+.card .c-top b{display:block; font-size:13.5px; font-weight:700; letter-spacing:-0.01em}
+.card .c-top i{display:block; font-style:normal; color:var(--ink-2); font-size:11px; word-break:keep-all}
+.card .c-big{font-size:25px; font-weight:700; letter-spacing:-0.02em; line-height:1}
+.card .c-bot{font-size:11.5px; color:var(--ink-2); line-height:1.4; margin-top:auto; word-break:keep-all}
+.card .gx{width:100%; height:auto}
+.card.scene.sp0 .c-top i{color:var(--sp0)} .card.scene.sp1 .c-top i{color:var(--sp1)} .card.scene.sp2 .c-top i{color:var(--sp2)}
+.card.ctr .c-top b{color:var(--good)}
+.card.dist{cursor:default}
+.card.dist .c-top b{color:var(--bad)}
+.card[aria-pressed="true"]{outline:2px solid var(--accent); outline-offset:2px; transform:translateY(-8px)}
+.card.dim{opacity:.62; filter:saturate(.4)}
+.card .c-flag{display:inline-block; align-self:flex-start; font-size:11.5px; font-weight:600; line-height:1.35; padding:2px 9px; border-radius:999px; background:var(--ink); color:var(--bg)}
+.card .c-flag.warn{background:var(--bad); color:var(--bg)}
+.card.hint::after{content:attr(data-hint); position:absolute; top:-10px; right:8px; background:var(--accent); color:var(--accent-ink); font-size:11px; font-weight:600; padding:0 8px; border-radius:999px; z-index:3}
+.card.page{width:208px}
+.card.page .c-top{display:flex; align-items:baseline; gap:8px; font-size:12.5px}
+.card.page .c-no{font-variant-numeric:tabular-nums; font-weight:600}
+.card.page .c-type{font-weight:700}
+.card.page.sp0 .c-type,.card.page.sp0 .c-no{color:var(--sp0)}
+.card.page.sp1 .c-type,.card.page.sp1 .c-no{color:var(--sp1)}
+.card.page.sp2 .c-type,.card.page.sp2 .c-no{color:var(--sp2)}
+.card .c-text{font-size:13px; line-height:1.7; color:var(--ink); word-break:keep-all}
+.bl{display:inline-block; min-width:3.4em; border-bottom:1.5px solid var(--ink-3); color:var(--ink-3); font-size:11.5px; line-height:1.3; text-align:center; padding:0 3px; margin:0 1px}
+.card.page .c-link{margin-top:auto; font-size:11.5px; color:var(--ink-2)}
+.card.page .c-link.need{color:var(--bad)}
+.actionbar{position:sticky; bottom:0; z-index:5; background:var(--bg); border-top:1px solid var(--rule); margin-top:16px; padding:10px 0 calc(12px + env(safe-area-inset-bottom, 0px)); display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; min-height:64px}
+.actionbar .msg{flex:1 1 300px; color:var(--ink-2); font-size:14px; word-break:keep-all}
+.actionbar .btnrow{margin:0; flex:none}
+.handzone .row-flex{display:flex; flex-wrap:wrap; gap:10px 24px; align-items:center; margin-top:12px}
+
+/* 카드 뒤집기: 뒷면이 가로로 접혔다가 앞면으로 펴져요 */
+.flip{animation:flipin .6s cubic-bezier(.3,.7,.3,1) backwards; animation-delay:calc(var(--d,0) * 80ms)}
+.flip::after{content:""; position:absolute; inset:-1px; border-radius:inherit; background:var(--back); box-shadow:inset 0 0 0 5px var(--gx-ink), inset 0 0 0 6px rgba(255,255,255,.45); pointer-events:none; z-index:4; animation:backgone .6s step-end both; animation-delay:calc(var(--d,0) * 80ms)}
+@keyframes flipin{
+  0%{transform:translate(0,var(--fy,-28px)) rotate(var(--r,0deg)) scale(.92,.92); opacity:0}
+  14%{opacity:1}
+  50%{transform:translate(0,var(--ty,0px)) rotate(var(--r,0deg)) scale(.02,1)}
+  100%{transform:translate(0,var(--ty,0px)) rotate(var(--r,0deg))}
+}
+@keyframes backgone{0%,49.9%{opacity:1} 50%,100%{opacity:0}}
+.rise{animation:rise .46s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes rise{from{transform:translateY(64px) scale(.9); opacity:0} to{transform:none; opacity:1}}
+
+/* 알림 */
+#toast{position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top, 0px)); transform:translateX(-50%); z-index:80; width:max-content; max-width:min(calc(100vw - 32px),520px); pointer-events:none}
+#toast p{background:var(--ink); color:var(--bg); font-size:13.5px; line-height:1.5; padding:8px 16px; border-radius:14px; animation:toastin .24s ease-out both; text-align:center; word-break:keep-all}
+@keyframes toastin{from{transform:translateY(-10px); opacity:0} to{transform:none; opacity:1}}
+
+/* 창 (쓰기, 방해, 규칙, 이어 읽기, 새 판 확인) */
+.ovl{position:fixed; inset:0; z-index:60; background:var(--scrim); display:flex; align-items:center; justify-content:center; overflow-y:auto;
+  padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+.sheet{background:var(--bg); color:var(--ink); border:1px solid var(--rule); border-radius:18px; width:min(100%,720px); max-height:100%; overflow-y:auto; padding:20px 24px 24px; animation:sheetin .26s ease-out both}
+.sheet:focus{outline:none}
+.sheet.still{animation:none}
+@keyframes sheetin{from{transform:translateY(18px); opacity:0} to{transform:none; opacity:1}}
+.sheet-head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px}
+.sheet-head h2{font-size:19px}
+.sheet-head .x{background:none; border:1px solid var(--line-strong); border-radius:999px; width:32px; height:32px; font-size:18px; line-height:1; cursor:pointer; flex:none}
+.sheet .sub{color:var(--ink-2); font-size:13.5px; margin-top:4px; word-break:keep-all}
+.sheet .page-art{width:140px; margin-top:14px}
+.sheet .page-art .gx{width:100%; height:auto}
+.sheet .frags{margin-top:6px}
+.sheet .btnrow{margin-top:18px}
+.sheet.narrow{width:min(100%,460px)}
+.sheet .book{margin-top:14px}
+
+/* 방해 */
+.dist-panel .dist-head{display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start; margin-top:4px}
+.dist-panel .dist-head .card{flex:none}
+.opts{display:grid; gap:8px; margin-top:14px}
+.opt-group > .gt{font-size:13px; font-weight:700; margin-top:10px}
+.opt-list{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px}
+.opt{border:1px solid var(--line-strong); background:var(--bg); border-radius:12px; padding:8px 14px; cursor:pointer; text-align:left}
+.opt:hover{border-color:var(--ink)}
+.opt:disabled{opacity:.4; cursor:not-allowed}
+.opt.hint{outline:2px solid var(--accent); outline-offset:1px}
+.opt.hint::after{content:" · 추천"; font-size:12px; color:var(--accent); font-weight:600}
+.opt.ctrbtn{border-color:var(--good); background:var(--good-t)}
+.opt.trbtn{border-color:var(--trace); background:var(--trace-t)}
+.opt .help{margin-top:2px}
+
+/* 쓰기: 안내문 두 줄과 칸 */
+.frags{list-style:none; margin:0; padding:0; display:grid; gap:0}
+.frag{border-top:1px solid var(--line); padding:12px 0}
+.frag:first-child{border-top:0}
+.frag .fh{display:flex; flex-wrap:wrap; gap:2px 10px; align-items:center; font-size:12.5px; color:var(--ink-3)}
+.frag .fh b{font-size:16px; font-weight:700; letter-spacing:-0.02em}
+.frag.pg0 .fh b{color:var(--sp0)} .frag.pg1 .fh b{color:var(--sp1)} .frag.pg2 .fh b{color:var(--sp2)}
+.frag .fh .ents{color:var(--ink); letter-spacing:.04em; display:inline-flex; gap:8px; align-items:center}
+.frag .fh .ents .eg{display:inline-flex; gap:3px; align-items:center}
+.frag p{margin:6px 0 0; line-height:2; font-size:15px}
+.frag p.pos{color:var(--ink-2)}
+.frag .nm{font-weight:700; font-style:normal}
+mark.fv{background:none; color:inherit; font:inherit}
+.wgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr)); gap:10px 22px; margin-top:10px}
+.wf{display:block; min-width:0}
+.wf > span{display:block; font-size:12.5px; color:var(--ink-3)}
+.wf textarea{display:block; width:100%; min-height:2.2em; resize:none; overflow:hidden; font-size:15px; line-height:1.7; padding:2px 2px 3px; background:transparent; color:var(--ink); border:0; border-bottom:1px solid var(--ink-3); border-radius:0; field-sizing:content}
+.wf textarea:focus-visible{border-bottom-color:var(--accent); box-shadow:0 1px 0 var(--accent)}
+.wf textarea::placeholder{color:var(--ink-3); font-size:13px}
+.wf.wide{margin-top:12px}
+details.fedit{margin-top:8px}
+
+/* 결과 */
+.result{margin-top:26px; padding-top:16px; border-top:3px solid var(--rule)}
+.res-head{display:flex; gap:18px; align-items:center}
+.res-head .gx{width:84px; height:84px; flex:none}
+.result .end{word-break:keep-all; font-size:26px; font-weight:700; letter-spacing:-0.03em; margin-top:2px; line-height:1.3}
+.result .verdict{font-size:13px; font-weight:500; color:var(--ink-3)}
+.bookwrap{margin-top:20px; padding:28px 26px 20px; background:var(--bg); border:1px solid var(--line-strong); border-radius:14px}
+.book{max-width:35em; margin:0 auto; font-size:16.5px; line-height:2; word-break:keep-all; overflow-wrap:anywhere}
+.book .book-cover{margin:0 auto 6px; width:92px}
+.book .book-cover .gx{width:100%; height:auto}
+.book .book-genre{text-align:center; font-size:12.5px; color:var(--ink-3)}
+.book h3.book-title{font-size:23px; text-align:center; margin:4px 0 22px; letter-spacing:-0.01em}
+.book p{margin:0 0 .5em; text-indent:1em}
+.book p.book-empty{text-indent:0; color:var(--ink-3); text-align:center}
+.bookwrap .toggle{margin-top:14px}
+details.edit{margin-top:18px}
+.log{margin:0; padding:0; list-style:none; font-size:13.5px; color:var(--ink-2)}
+.log li{padding:4px 0; border-bottom:1px solid var(--line)}
+.log li:first-child{color:var(--ink)}
+details.logbox{margin-top:30px; border-top:1px solid var(--rule); padding-top:2px}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .table{grid-template-columns:auto minmax(0,1fr)}
+  .strip{grid-column:1 / -1}
+}
+@media (max-width:560px){
+  body{padding-top:12px}
+  .hero{padding-top:20px}
+  .how li{grid-template-columns:92px minmax(0,1fr); gap:4px 16px}
+  .table{padding:14px; gap:14px 16px}
+  .piles{flex-direction:column; gap:12px}
+  .pile{width:62px; height:86px}
+  .pile b{font-size:21px}
+  .card{width:calc(33.33% - 8px); min-width:96px}
+  .card.page{width:calc(50% - 6px); min-width:0}
+  .genre,.setting{width:100%}
+  .genre{display:grid; grid-template-columns:84px minmax(0,1fr); gap:3px 16px; align-items:center; padding:12px 14px}
+  .genre .gx{grid-column:1; grid-row:1 / span 3; width:84px; height:84px; margin:0}
+  .genre > :not(.gx){grid-column:2}
+  .ovl{align-items:flex-end; padding-inline:0; padding-bottom:0}
+  .sheet{border-radius:18px 18px 0 0; width:100%; max-height:92%; padding-inline:max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
+  .bookwrap{padding:22px 16px 16px}
+  .res-head .gx{width:62px; height:62px}
+  .mini{width:calc(50% - 5px)}
+  .status{grid-template-columns:1fr 1fr}
+  .status .stat.gn{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .flip,.flip::after,.rise,.sheet,#toast p{animation:none}
+  .card{transition:none}
+}
+
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <pattern id="pt-dot" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.2" fill="#15171A"/></pattern>
+  <pattern id="pt-dotw" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.2" fill="#FFFFFF"/></pattern>
+  <pattern id="pt-chk" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#FFFFFF"/><rect width="4" height="4" fill="#15171A"/><rect x="4" y="4" width="4" height="4" fill="#15171A"/></pattern>
+  <pattern id="pt-chkw" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#15171A"/><rect width="4" height="4" fill="#FFFFFF"/><rect x="4" y="4" width="4" height="4" fill="#FFFFFF"/></pattern>
+</defs></svg>
+<div id="page"><div class="wrap"><header class="bar" id="bar"></header><main id="app"></main></div></div>
+<div id="layer"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* 독서 이야기 게임 — 규칙 엔진 (브라우저와 노드 공용) */
+(function (root) {
+  'use strict';
+
+  var SPACES = ['책상', '침대', '바닥'];
+  var SPACE_ROLE = ['인물', '사건', '배경'];
+  var POSTURES = ['앉기', '눕기', '서기'];
+  var POSTURE_LENS = ['분위기·감정', '욕망', '관계'];
+  var ENT = ['A', 'B', '①', '②'];
+  var DIST_NAMES = ['핸드폰', '졸음', '읽던 곳 잃음', '바깥 소리', '집필 막힘'];
+  var CTR_NAMES = ['핸드폰 치워두기', '기지개 켜기', '책갈피', '문 닫기', '메모해 두기'];
+  var TRACE_INFO = [
+    { story: '다음 이음은 한 문장 이내로 끊긴다', proxy: '다음 페이지는 직전 페이지와 같은 인물·장소가 하나 이상 겹쳐야 해요' },
+    { story: '다음 이음은 건너뛸 수 있다. 대신 글에 불확실함을 담는다', proxy: '다음 페이지는 직전 페이지와 겹치는 인물·장소가 없어야 해요 (이음 비용 면제)' },
+    { story: '반납한 장면을 다시 놓을 때 인물·사건·배경 중 하나를 바꾼다', proxy: '다음 페이지는 직전 페이지와 다른 유형' },
+    { story: '다음 이음에 소리나 외부의 개입이 들어간다', proxy: '다음 페이지는 사건 유형' },
+    { story: '다음 연결은 이음 한 줄 없이 공유 요소만으로 잇는다', proxy: '다음 페이지는 직전 페이지와 같은 유형' }
+  ];
+
+  // 엔티티 마스크: A=1, B=2, ①=4, ②=8
+  function mk(str) {
+    var m = 0;
+    if (str.indexOf('A') >= 0) m |= 1;
+    if (str.indexOf('B') >= 0) m |= 2;
+    if (str.indexOf('①') >= 0) m |= 4;
+    if (str.indexOf('②') >= 0) m |= 8;
+    return m;
+  }
+  function entList(mask) {
+    var out = [];
+    for (var i = 0; i < 4; i++) if (mask & (1 << i)) out.push(ENT[i]);
+    return out;
+  }
+
+  // 페이지 카드: 유형(0 인물, 1 사건, 2 배경), 등장하는 인물·장소, 안내문. [[힌트]]는 쓰는 칸이에요.
+  function defaultPageCards() {
+    function pc(type, ents, text) { return { type: type, mask: mk(ents), text: text }; }
+    return [
+      // 인물
+      pc(0, 'AB', 'A는 [[행동]]. 그러자 B는 [[반응]].'),
+      pc(0, 'AB', 'B는 A에게 부탁했다. “[[부탁]]” A는 [[대답]]. 하지만 A의 속마음은 [[속마음]].'),
+      pc(0, 'AB', 'A는 B에 대해 한 가지를 오해하고 있었다. A는 [[오해]]. 하지만 사실은 [[진실]].'),
+      pc(0, 'A', 'A는 늘 [[물건]]을/를 지니고 다녔다. 만약 그것을 잃어버린다면 [[벌어질 일]].'),
+      pc(0, 'A', 'A에게는 아무에게도 말하지 않은 비밀이 있었다. 그것은 [[비밀]](이)었다. A는 그것을 숨기려고 [[행동]].'),
+      pc(0, 'A①', 'A는 ①에 자주 갔다. 그 이유는 [[이유]](이)었다. 거기서 A는 [[하는 일]].'),
+      pc(0, 'B', 'B는 겉으로는 [[겉모습]]. 그러나 속은 [[속모습]].'),
+      pc(0, 'B', 'B에게는 버릇이 하나 있었다. B는 [[버릇]]. 그 버릇이 가장 잘 드러나는 때는 [[때]](이)었다.'),
+      pc(0, 'B', 'B는 [[아끼는 것]]을/를 무엇보다 아꼈다. 그것을 지키려고 B는 [[한 일]].'),
+      pc(0, 'B②', 'B는 ②에서 몰래 [[하던 일]]. 그 사실을 아는 사람은 [[누구]](이)었다.'),
+      // 사건
+      pc(1, 'A①', '①에서 A는 뜻밖의 것을 발견했다. 그것은 [[발견한 것]](이)었다. 그것은 A에게 [[의미]].'),
+      pc(1, 'B②', '②에서 B에게 뜻밖의 일이 일어났다. 그것은 [[일]](이)었다. B는 어쩔 수 없이 [[행동]].'),
+      pc(1, 'AB①', '①에서 A와 B가 마주쳤다. 먼저 입을 연 쪽은 [[누구]](이)었다. 그가 한 말은 이랬다. “[[말]]”'),
+      pc(1, 'AB②', '②에서 A와 B 사이에 약속이 오갔다. “[[약속의 말]]” 그 일 때문에 [[결과]].'),
+      pc(1, 'A②', 'A는 ②에서 사라진 것을 찾아다녔다. 그것은 [[없어진 것]](이)었다. 하지만 끝내 찾지 못했다. 그 까닭은 [[이유]](이)었다.'),
+      pc(1, 'B①', 'B는 ①에 무언가를 두고 떠났다. 그것은 [[남긴 것]](이)었다. 그것을 처음 발견한 사람은 [[누구]](이)었다.'),
+      pc(1, 'A②', '②에서 갑자기 변화가 생겼다. [[변화]]. 그러자 A는 [[행동]].'),
+      pc(1, 'A①', 'A는 ①에서 어떤 결심을 했다. 그 결심은 [[결심]](이)었다. 그러나 [[계기]] 때문에 마음이 흔들렸다.'),
+      pc(1, 'B①', 'B는 ①에서 어떤 비밀을 알게 되었다. 그 비밀은 [[비밀]](이)었다. 그런데도 B는 모르는 척했다. 그 이유는 [[이유]](이)었다.'),
+      pc(1, 'B②', '②에서 B는 선택을 했다. B는 [[선택]]. 그 결과 [[달라진 것]].'),
+      // 배경
+      pc(2, '①', '①의 풍경은 이러했다. [[보이는 것]]. 그곳에서는 [[소리]]이/가 들렸다. 공기에는 [[냄새]]이/가 배어 있었다.'),
+      pc(2, '①', '①에는 오랫동안 쓰이지 않은 물건이 있었다. 그것은 [[물건]](이)었다. 그렇게 된 이유는 [[이유]](이)었다.'),
+      pc(2, '①', '①에는 기억이 얽혀 있었다. [[기억]]. 지금 그곳은 [[모습]].'),
+      pc(2, '②', '②의 시간은 [[계절 또는 시간대]](이)었다. 그곳에는 모두가 지키는 규칙이 있었다. [[규칙]].'),
+      pc(2, '②', '②에는 소문이 돌았다. [[소문]]. 사람들은 그 소문을 [[태도]].'),
+      pc(2, '②', '②에서는 [[감정]]이/가 느껴졌다. 그 까닭은 [[이유]](이)었다.'),
+      pc(2, '①②', '①에서 ②까지 가는 길은 [[길의 모습]]. ②까지 가는 데에는 [[시간이나 수단]]이/가 필요했다.'),
+      pc(2, '①②', '①과 ②에는 닮은 점이 있었다. [[닮은 점]]. 하지만 다른 점도 있었다. [[다른 점]].'),
+      pc(2, '①', '①에는 아주 오래 남은 흔적이 있었다. 그것은 [[흔적]](이)었다. 그 흔적은 [[의미]].'),
+      pc(2, '②', '②에는 해가 지면 어김없이 일이 벌어졌다. [[일]]. 그때 그곳에 남아 있는 것은 [[남은 것]](이)었다.')
+    ];
+  }
+
+  // 장르마다 설정 후보 3개. line 상황 한 줄, A·B 인물의 역할, p1·p2 ①·②의 장소
+  function defaultGenres() {
+    function st(line, A, B, p1, p2) { return { line: line, A: A, B: B, p1: p1, p2: p2 }; }
+    return [
+      { name: '로맨스', space: 0, vuln: 0, settings: [
+        st('마지막 인사를 앞둔 두 사람', '떠나려는 사람', '붙잡지 못하는 사람', '짐을 싼 방', '막차가 오는 정류장'),
+        st('오래 소식이 끊겼던 두 사람', '편지를 보낸 사람', '답장을 못 한 사람', '옛 동네의 골목', '서로의 새로운 집'),
+        st('서로를 모르는 척하는 두 사람', '말을 아끼는 사람', '눈치채 버린 사람', '매일 마주치는 엘리베이터', '문이 잠기지 않는 옥상')
+      ] },
+      { name: '공포', space: 2, vuln: 3, settings: [
+        st('이사 온 집에서 생긴 일', '새로 이사 온 사람', '집을 잘 아는 이웃', '이사 온 집', '열리지 않던 지하 창고'),
+        st('돌아오지 않는 사람을 찾는 이야기', '찾으러 나선 사람', '돌아오지 않는 사람', '마지막으로 목격된 숲길', '불이 켜진 빈 학교'),
+        st('야간 근무 중 일어난 일', '야간 근무자', '있어서는 안 될 곳에 있는 사람', '불 꺼진 복도', '경비실')
+      ] },
+      { name: '미스터리', space: 1, vuln: 2, settings: [
+        st('사라진 물건의 행방', '물건을 잃은 사람', '알면서 말하지 않는 사람', '마지막으로 본 방', '문 닫기 직전의 가게'),
+        st('잘못 배달된 편지', '편지를 받은 사람', '편지를 보낸 사람', '우편함이 있는 현관', '편지에 적힌 주소지'),
+        st('저마다 한 가지씩 숨기는 모임', '질문을 던지는 사람', '대답을 피하는 사람', '모임이 열리는 거실', '모두가 돌아간 뒤의 주방')
+      ] },
+      { name: '모험', space: 1, vuln: 1, settings: [
+        st('지도 한 장을 들고 떠나는 길', '지도를 가진 사람', '길을 아는 사람', '떠나는 항구', '지도가 끝나는 섬'),
+        st('되찾아야 할 것이 있는 여행', '되찾으러 가는 사람', '동행하게 된 사람', '떠나기 전날의 마을', '가장 먼 도착지'),
+        st('길을 잘못 들어 시작된 이야기', '길을 잃은 사람', '길을 알려 준 사람', '갈림길', '처음 보는 마을')
+      ] },
+      { name: '일상', space: 0, vuln: 4, settings: [
+        st('평범한 하루에 끼어든 사소한 일', '하루를 반복하는 사람', '늘 같은 자리에 있는 사람', '단골 가게', '퇴근길'),
+        st('이사를 앞둔 집에서', '짐을 정리하는 사람', '도와주러 온 사람', '비워 가는 방', '동네 골목'),
+        st('오래된 친구와의 점심', '약속을 잡은 사람', '약속에 늦은 사람', '늘 가던 식당', '역 앞 광장')
+      ] },
+      { name: 'SF', space: 2, vuln: 4, settings: [
+        st('다른 시간에서 온 신호', '신호를 받은 사람', '신호를 보낸 사람', '관측소', '신호가 시작된 곳'),
+        st('기억이 한 칸씩 지워지는 도시', '기억을 잃어 가는 사람', '기록을 맡은 사람', '도시의 중앙 기록실', '지워진 구역'),
+        st('마지막 거주지로 떠나는 우주선', '승선을 앞둔 사람', '남기로 한 사람', '출발 직전의 도크', '우주선 안의 정원')
+      ] },
+      { name: '역사', space: 2, vuln: 1, settings: [
+        st('전쟁이 가까워 오는 마을', '소식을 전하는 사람', '떠나지 못하는 사람', '마을 우물가', '성문 앞'),
+        st('기록에서 지워진 사람', '기록을 베끼는 사람', '기록에서 빠진 사람', '필사실', '사라진 이름의 고향'),
+        st('궁궐 밖으로 나온 하룻밤', '궁을 벗어난 사람', '길을 안내하는 사람', '궁궐 뒷문', '밤시장')
+      ] }
+    ];
+  }
+
+  function defaultConfig() {
+    return {
+      hand: 6,
+      target: 27,
+      pagePts: 2,
+      overPenalty: 2,
+      bridgeCost: 2,
+      violationPenalty: 2,
+      traceRatio: 0.5,
+      genreBonus: 1,
+      vulnPlus: 1,
+      earlyFrac: 0.25,
+      // 이야기 판: 유형별로 놓을 수 있는 페이지 수 [인물, 사건, 배경]
+      slots: [4, 5, 4],
+      // 칸이 가득 찬 유형의 페이지: slotLock이 true면 아예 못 내고, false면 낼 수는 있지만 slotOverPenalty만큼 감점
+      slotLock: false,
+      slotOverPenalty: 2,
+      // 자세별로 모든 페이지에 덧붙는 안내문
+      posturePrompts: ['그 장면의 분위기는 [[분위기]].', '그 순간 누군가는 속으로 [[바란 것]].', '그 순간 A와 B의 사이는 [[관계]].'],
+      pageCards: defaultPageCards(),
+      // 자리 카드 9종: 공간(책상·침대·바닥) × 자세(앉기·눕기·서기). B 기본점, L 읽기 한도, R 읽기 소모, E 진입 소모, n 장수
+      scenes: [
+        { B: 1, L: 3, R: 1, E: 1, n: 2 },
+        { B: 0, L: 2, R: 0, E: 1, n: 2 },
+        { B: 2, L: 2, R: 1, E: 2, n: 2 },
+        { B: 1, L: 3, R: 1, E: 0, n: 2 },
+        { B: 1, L: 4, R: 1, E: 1, n: 2 },
+        { B: 2, L: 2, R: 2, E: 1, n: 2 },
+        { B: 0, L: 4, R: 1, E: 0, n: 2 },
+        { B: 0, L: 3, R: 0, E: 1, n: 2 },
+        { B: 1, L: 3, R: 1, E: 2, n: 2 }
+      ],
+      // 방해 5종. S 점수 손실, D 덱 손실, R 반납 장수, n 방해 장수, c 무마 카드 장수
+      dist: [
+        { S: 2, D: 3, R: 1, n: 2, c: 1 },
+        { S: 2, D: 4, R: 1, n: 2, c: 1 },
+        { S: 3, D: 4, R: 1, n: 2, c: 1 },
+        { S: 2, D: 4, R: 1, n: 2, c: 1 },
+        { S: 2, D: 4, R: 1, n: 2, c: 1 }
+      ],
+      // 장르 7종: space 유리한 공간(0~2), vuln 취약한 방해(0~4), settings 설정 후보 3개
+      genres: defaultGenres()
+    };
+  }
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function shuffle(arr, rng) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(rng() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+  function spaceOf(sid) { return Math.floor(sid / 3); }
+  function postureOf(sid) { return sid % 3; }
+  function sceneName(sid) { return SPACES[spaceOf(sid)] + '·' + POSTURES[postureOf(sid)]; }
+
+  function deckSize(cfg) {
+    var n = cfg.pageCards.length, i;
+    for (i = 0; i < 9; i++) n += cfg.scenes[i].n;
+    for (i = 0; i < 5; i++) n += cfg.dist[i].n + cfg.dist[i].c;
+    return n;
+  }
+  function pageCountByType(cfg) {
+    var c = [0, 0, 0];
+    cfg.pageCards.forEach(function (p) { if (c[p.type] != null) c[p.type]++; });
+    return c;
+  }
+  // 페이지 카드 두 장을 무작위로 골랐을 때 인물·장소가 하나라도 겹칠 확률
+  function overlapRate(cfg) {
+    var p = cfg.pageCards, n = p.length, hit = 0, tot = 0, i, j;
+    for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) { tot++; if (p[i].mask & p[j].mask) hit++; }
+    return tot ? hit / tot : 0;
+  }
+
+  function buildDeck(cfg, rng) {
+    var cards = [], i, k;
+    cfg.pageCards.forEach(function (pc, pi) { cards.push({ t: 'page', pi: pi, type: pc.type, mask: pc.mask }); });
+    for (i = 0; i < 9; i++) for (k = 0; k < cfg.scenes[i].n; k++) cards.push({ t: 'scene', sid: i });
+    for (i = 0; i < 5; i++) {
+      for (k = 0; k < cfg.dist[i].n; k++) cards.push({ t: 'dist', did: i });
+      for (k = 0; k < cfg.dist[i].c; k++) cards.push({ t: 'ctr', did: i });
+    }
+    return shuffle(cards, rng);
+  }
+
+  function newGame(cfg, seed) {
+    var rng = mulberry32(seed >>> 0);
+    var s = {
+      cfg: cfg, rng: rng, deck: buildDeck(cfg, rng), hand: [], discard: [], story: [],
+      scene: null, trace: null, genre: null, genreIdx: -1, genreOptions: [],
+      setting: null, settingIdx: -1, names: { A: '', B: '', p1: '', p2: '' },
+      score: 0, turn: 0, over: false, win: false, reason: '', phase: 'genre', pending: null,
+      size0: 0,
+      st: {
+        draws: 0, dHit: [0, 0, 0, 0, 0], ctrUsed: 0, traceTaken: 0, traceOffered: 0,
+        violations: 0, satisfied: 0, bridges: 0, passes: 0, scenePlays: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        pageType: [0, 0, 0], deadDiscards: 0,
+        pagePlays: 0, returned: 0, overs: 0, slotOvers: 0, payScore: 0, payDeck: 0, payRet: 0, blocked: 0
+      }
+    };
+    s.size0 = s.deck.length;
+    var idx = cfg.genres.map(function (_, i) { return i; });
+    shuffle(idx, rng);
+    s.genreOptions = idx.slice(0, Math.min(3, idx.length));
+    return s;
+  }
+
+  function chooseGenre(s, gi) {
+    s.genreIdx = gi; s.genre = s.cfg.genres[gi]; s.phase = 'setting';
+  }
+  // 설정 후보 고르기. names는 선택 사항(A, B, p1, p2 이름)
+  function chooseSetting(s, si, names) {
+    var list = (s.genre && s.genre.settings) || [];
+    s.settingIdx = si;
+    s.setting = list[si] || null;
+    if (names) s.names = { A: names.A || '', B: names.B || '', p1: names.p1 || '', p2: names.p2 || '' };
+    s.phase = 'draw';
+  }
+
+  function check(s) {
+    if (s.over) return;
+    if (s.score >= s.cfg.target) { s.over = true; s.win = true; s.reason = 'target'; s.phase = 'end'; }
+    else if (s.deck.length === 0) { s.over = true; s.win = false; s.reason = 'deck'; s.phase = 'end'; }
+  }
+
+  function burn(s, n) {
+    while (n > 0 && s.deck.length > 0) { s.discard.push(s.deck.pop()); n--; }
+    check(s);
+  }
+
+  function lastStory(s) { return s.story.length ? s.story[s.story.length - 1] : null; }
+  function slotsUsed(s, type) {
+    var n = 0;
+    for (var i = 0; i < s.story.length; i++) if (s.story[i].type === type) n++;
+    return n;
+  }
+  function slotsLeft(s, type) { return s.cfg.slots[type] - slotsUsed(s, type); }
+
+  function fillStep(s) {
+    if (s.over) return 'over';
+    if (s.pending) return 'dist';
+    while (s.hand.length < s.cfg.hand) {
+      if (s.deck.length === 0) { check(s); return 'over'; }
+      var c = s.deck.pop();
+      s.st.draws++;
+      if (c.t === 'dist') {
+        s.pending = c; s.st.dHit[c.did]++; s.phase = 'disturbance';
+        check(s);
+        return s.over ? 'over' : 'dist';
+      }
+      s.hand.push(c);
+      check(s);
+      if (s.over) return 'over';
+    }
+    s.phase = 'play';
+    return 'ready';
+  }
+
+  function distCosts(s, did) {
+    var b = s.cfg.dist[did];
+    var v = (s.genre && s.genre.vuln === did) ? s.cfg.vulnPlus : 0;
+    return { score: b.S + v, deck: b.D + v, ret: b.R + v };
+  }
+  function traceCosts(s, did) {
+    var f = distCosts(s, did), r = s.cfg.traceRatio;
+    function g(n) { return n <= 0 ? 0 : Math.max(1, Math.floor(n * r + 1e-9)); }
+    return { score: g(f.score), deck: g(f.deck), ret: g(f.ret) };
+  }
+  function counterIndex(s, did) {
+    for (var i = 0; i < s.hand.length; i++) if (s.hand[i].t === 'ctr' && s.hand[i].did === did) return i;
+    return -1;
+  }
+
+  // ch: {use:'counter'} | {mode:'pay'|'trace', opt:'score'|'deck'|'return'}
+  function resolveDisturbance(s, ch) {
+    var d = s.pending;
+    if (!d || s.over) return false;
+    if (ch.use === 'counter') {
+      var ci = counterIndex(s, d.did);
+      if (ci < 0) return false;
+      s.discard.push(s.hand.splice(ci, 1)[0]);
+      s.st.ctrUsed++;
+    } else {
+      var trace = ch.mode === 'trace';
+      if (trace && s.trace) return false;
+      var tbl = trace ? traceCosts(s, d.did) : distCosts(s, d.did);
+      if (ch.opt === 'return' && !s.story.length) return false;
+      if (!s.trace) s.st.traceOffered++;
+      if (ch.opt === 'score') { s.score -= tbl.score; s.st.payScore++; }
+      else if (ch.opt === 'deck') { burn(s, tbl.deck); s.st.payDeck++; }
+      else if (ch.opt === 'return') {
+        var k = Math.min(tbl.ret, s.story.length), i;
+        for (i = 0; i < k; i++) s.discard.push(s.story.pop().card);
+        s.score -= k * s.cfg.pagePts; s.st.returned += k; s.st.payRet++;
+      } else return false;
+      if (trace) { s.trace = { did: d.did }; s.st.traceTaken++; }
+    }
+    s.discard.push(d);
+    s.pending = null;
+    if (!s.over) s.phase = 'draw';
+    check(s);
+    return true;
+  }
+
+  // 직전 페이지(prev)와 겹치는 인물·장소가 있는가
+  function shares(a, b) { return !!(a && b && (a.mask & b.mask)); }
+
+  function traceOk(did, page, prev) {
+    if (did === 3) return page.type === 1;
+    if (!prev) return true;
+    switch (did) {
+      case 0: return shares(page, prev);
+      case 1: return !shares(page, prev);
+      case 2: return page.type !== prev.type;
+      case 4: return page.type === prev.type;
+    }
+    return true;
+  }
+
+  function canPlay(s, i) {
+    var c = s.hand[i];
+    if (!c) return { ok: false, why: '없는 카드예요' };
+    if (c.t === 'scene') return { ok: true };
+    if (c.t === 'page') {
+      if (!s.scene) return { ok: false, why: '먼저 자리 카드를 내야 페이지를 읽을 수 있어요' };
+      if (spaceOf(s.scene.sid) !== c.type) {
+        return { ok: false, why: '지금 자리는 ' + SPACES[spaceOf(s.scene.sid)] + '(' + SPACE_ROLE[spaceOf(s.scene.sid)] + ')라서 ' + SPACE_ROLE[spaceOf(s.scene.sid)] + ' 페이지만 낼 수 있어요' };
+      }
+      if (s.cfg.slotLock && slotsLeft(s, c.type) <= 0) {
+        return { ok: false, why: '이야기 판의 ' + SPACE_ROLE[c.type] + ' 칸이 모두 찼어요 (' + s.cfg.slots[c.type] + '/' + s.cfg.slots[c.type] + ')' };
+      }
+      return { ok: true };
+    }
+    return { ok: false, why: '무마 카드는 방해가 올 때만 쓰고, 아니면 버릴 수 있어요' };
+  }
+
+  // 페이지를 낼 때의 결과 미리보기 (실제로 적용하지 않음)
+  function previewPage(s, i) {
+    var c = s.hand[i], cfg = s.cfg;
+    var sc = cfg.scenes[s.scene.sid];
+    var prev = lastStory(s);
+    var over = (s.scene.reads + 1 > sc.L);
+    var slotOver = slotsLeft(s, c.type) <= 0;
+    var bridged = !!(prev && !shares(prev, c));
+    var waived = !!(s.trace && s.trace.did === 1 && traceOk(1, c, prev));
+    var viol = !!(s.trace && !traceOk(s.trace.did, c, prev));
+    var deckCost = sc.R + (bridged && !waived ? cfg.bridgeCost : 0);
+    // 한도·칸 초과는 그 페이지의 점수를 깎을 뿐, 0 밑으로 내려가게 하지는 않는다. 흔적 위반만 따로 감점
+    var gain = Math.max(0, cfg.pagePts - (over ? cfg.overPenalty : 0) - (slotOver ? cfg.slotOverPenalty : 0)) - (viol ? cfg.violationPenalty : 0);
+    return { gain: gain, deckCost: deckCost, over: over, slotOver: slotOver, bridged: bridged, waived: waived, viol: viol, traceDid: s.trace ? s.trace.did : -1 };
+  }
+
+  function doPlay(s, kind, i) {
+    if (s.over || s.phase !== 'play') return { ok: false };
+    var cfg = s.cfg, c = s.hand[i], info = { kind: kind };
+    if (!c) return { ok: false };
+    if (kind === 'pass') {
+      s.discard.push(s.hand.splice(i, 1)[0]);
+      s.st.passes++;
+      if (c.t === 'page' && slotsLeft(s, c.type) <= 0) s.st.deadDiscards++;
+      info.card = c;
+    } else if (kind === 'scene') {
+      if (c.t !== 'scene') return { ok: false };
+      s.hand.splice(i, 1);
+      if (s.scene) s.discard.push(s.scene.card);
+      var sc = cfg.scenes[c.sid];
+      var bonus = (s.genre && s.genre.space === spaceOf(c.sid)) ? cfg.genreBonus : 0;
+      s.scene = { sid: c.sid, reads: 0, card: c };
+      s.score += sc.B + bonus;
+      s.st.scenePlays[c.sid]++;
+      info.gain = sc.B + bonus; info.bonus = bonus; info.deckCost = sc.E;
+      burn(s, sc.E);
+    } else if (kind === 'page') {
+      var cp = canPlay(s, i);
+      if (!cp.ok) return { ok: false, why: cp.why };
+      var pv = previewPage(s, i);
+      s.hand.splice(i, 1);
+      s.scene.reads++;
+      s.score += pv.gain;
+      if (pv.over) s.st.overs++;
+      if (pv.slotOver) s.st.slotOvers++;
+      if (s.trace) {
+        if (pv.viol) s.st.violations++; else s.st.satisfied++;
+        info.traceDid = s.trace.did; info.traceViol = pv.viol;
+        s.trace = null;
+      }
+      if (pv.bridged) s.st.bridges++;
+      s.story.push({ card: c, pi: c.pi, type: c.type, mask: c.mask, bridged: pv.bridged, waived: pv.waived, sid: s.scene.sid, note: '', fills: [] });
+      s.st.pagePlays++;
+      s.st.pageType[c.type]++;
+      for (var k in pv) info[k] = pv[k];
+      burn(s, pv.deckCost);
+    } else return { ok: false };
+    s.turn++;
+    if (!s.over) s.phase = 'draw';
+    check(s);
+    return { ok: true, info: info };
+  }
+
+  function endingName(s) {
+    var left = s.deck.length, early = left >= s.cfg.earlyFrac * s.size0;
+    if (s.win) {
+      if (early) return '아껴 읽기 위해 멈춘다';
+      if (s.st.traceTaken >= 2) return '흔적을 안고 마무리한다';
+      return '별다른 이유 없이 그냥 마무리한다';
+    }
+    var lying = s.scene && postureOf(s.scene.sid) === 1;
+    if (s.st.dHit[1] >= 2 || lying) return '졸음이 쏟아져 잠에 든다';
+    if (s.st.violations >= 1) return '이어지지 않은 채 덮는다';
+    return '집중력이 떨어져 덮는다';
+  }
+  var ENDINGS = ['아껴 읽기 위해 멈춘다', '흔적을 안고 마무리한다', '별다른 이유 없이 그냥 마무리한다',
+    '졸음이 쏟아져 잠에 든다', '이어지지 않은 채 덮는다', '집중력이 떨어져 덮는다'];
+
+  /* ---------------- 봇 ---------------- */
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function deckValue(s) {
+    var need = Math.max(0, s.cfg.target - s.score);
+    return clamp(need / Math.max(10, s.deck.length), 0.25, 1.2);
+  }
+  function handPages(s, type) {
+    var n = 0;
+    for (var i = 0; i < s.hand.length; i++) if (s.hand[i].t === 'page' && (type === undefined || s.hand[i].type === type)) n++;
+    return n;
+  }
+  // 손에 든 해당 유형 페이지 중 이야기 판 칸이 남아 있어 실제로 낼 수 있는 수
+  function usablePages(s, type) {
+    return Math.min(handPages(s, type), Math.max(0, slotsLeft(s, type)));
+  }
+
+  function traceRisk(s, did) {
+    var cfg = s.cfg, prev = lastStory(s);
+    if (!prev && did !== 3) return 0;
+    var pages = s.hand.filter(function (c) { return c.t === 'page'; });
+    var here = s.scene ? spaceOf(s.scene.sid) : -1;
+    var anyPlayable = pages.some(function (c) { return c.type === here && slotsLeft(s, c.type) > 0 && traceOk(did, c, prev); });
+    var anySat = pages.some(function (c) { return slotsLeft(s, c.type) > 0 && traceOk(did, c, prev); });
+    if (anyPlayable) return cfg.violationPenalty * 0.1;
+    if (anySat) return cfg.violationPenalty * 0.3;
+    return cfg.violationPenalty * 0.75;
+  }
+
+  function botDisturb(s, bp) {
+    var d = s.pending, did = d.did, cfg = s.cfg;
+    if (counterIndex(s, did) >= 0 && bp.useCounter !== false) return { use: 'counter' };
+    var dvv = deckValue(s);
+    function cost(opt, n) {
+      if (opt === 'score') return n;
+      if (opt === 'deck') return n * dvv;
+      return Math.min(n, s.story.length) * cfg.pagePts * 1.5;
+    }
+    var full = distCosts(s, did), tr = traceCosts(s, did);
+    var opts = ['score', 'deck'];
+    if (s.story.length) opts.push('return');
+    var best = null, bestTrace = null, i, v;
+    for (i = 0; i < opts.length; i++) {
+      v = cost(opts[i], full[opts[i] === 'return' ? 'ret' : opts[i]]);
+      if (!best || v < best.v) best = { mode: 'pay', opt: opts[i], v: v };
+    }
+    if (!s.trace) {
+      var risk = traceRisk(s, did);
+      var waive = did === 1 ? cfg.bridgeCost * dvv * 0.5 : 0;
+      for (i = 0; i < opts.length; i++) {
+        v = cost(opts[i], tr[opts[i] === 'return' ? 'ret' : opts[i]]) + risk - waive;
+        if (!bestTrace || v < bestTrace.v) bestTrace = { mode: 'trace', opt: opts[i], v: v };
+      }
+    }
+    var pol = bp.trace || 'smart';
+    if (bestTrace && pol === 'always') return bestTrace;
+    if (bestTrace && pol === 'smart' && bestTrace.v < best.v) return bestTrace;
+    return best;
+  }
+
+  function sceneValue(s, sid, dvv) {
+    var cfg = s.cfg, sc = cfg.scenes[sid], sp = spaceOf(sid);
+    var bonus = (s.genre && s.genre.space === sp) ? cfg.genreBonus : 0;
+    var perPage = cfg.pagePts - sc.R * dvv - 0.5 * cfg.bridgeCost * dvv;
+    var potNew = Math.min(usablePages(s, sp), sc.L) * perPage;
+    var potOld = 0;
+    if (s.scene) {
+      var cur = cfg.scenes[s.scene.sid], rem = Math.max(0, cur.L - s.scene.reads);
+      var perOld = cfg.pagePts - cur.R * dvv - 0.5 * cfg.bridgeCost * dvv;
+      potOld = Math.min(usablePages(s, spaceOf(s.scene.sid)), rem) * perOld;
+    }
+    return sc.B + bonus - sc.E * dvv + potNew - potOld;
+  }
+
+  function keepValue(s, c) {
+    if (c.t === 'ctr') return 1.2;
+    if (c.t === 'scene') {
+      var n = usablePages(s, spaceOf(c.sid));
+      return 0.8 + 0.3 * n;
+    }
+    if (slotsLeft(s, c.type) <= 0) return 0.1;
+    var here = s.scene ? spaceOf(s.scene.sid) : -1;
+    var v = 0.9 + (c.type === here ? 0.6 : 0);
+    var sceneInHand = s.hand.some(function (h) { return h.t === 'scene' && spaceOf(h.sid) === c.type; });
+    if (sceneInHand) v += 0.4;
+    return v;
+  }
+
+  function evaluatePlays(s) {
+    var dvv = deckValue(s), out = [], i, c, cp, pv;
+    for (i = 0; i < s.hand.length; i++) {
+      c = s.hand[i]; cp = canPlay(s, i);
+      if (!cp.ok) continue;
+      if (c.t === 'scene') out.push({ kind: 'scene', i: i, v: sceneValue(s, c.sid, dvv) });
+      else {
+        pv = previewPage(s, i);
+        out.push({ kind: 'page', i: i, v: pv.gain - pv.deckCost * dvv });
+      }
+    }
+    return out;
+  }
+  function worstCardIndex(s) {
+    var wi = 0, wv = Infinity;
+    for (var i = 0; i < s.hand.length; i++) {
+      var v = keepValue(s, s.hand[i]);
+      if (v < wv) { wv = v; wi = i; }
+    }
+    return wi;
+  }
+  function suggestPlay(s) {
+    var plays = evaluatePlays(s), best = null;
+    plays.forEach(function (p) { if (!best || p.v > best.v) best = p; });
+    if (best && best.v > 0.05) return best;
+    return { kind: 'pass', i: worstCardIndex(s), v: 0 };
+  }
+
+  function botPlay(s, bp) {
+    var sloppy = bp.sloppy || 0;
+    if (sloppy > 0 && s.rng() < sloppy) {
+      var plays = evaluatePlays(s);
+      if (plays.length && s.rng() < 0.8) {
+        var p = plays[Math.floor(s.rng() * plays.length)];
+        return doPlay(s, p.kind, p.i);
+      }
+      return doPlay(s, 'pass', Math.floor(s.rng() * s.hand.length));
+    }
+    var sg = suggestPlay(s);
+    if (sg.kind === 'pass') {
+      var anyLegal = false;
+      for (var i = 0; i < s.hand.length; i++) if (canPlay(s, i).ok) { anyLegal = true; break; }
+      if (!anyLegal) s.st.blocked++;
+    }
+    return doPlay(s, sg.kind, sg.i);
+  }
+
+  function botGenre(s) {
+    var best = -1, bv = -Infinity, cfg = s.cfg;
+    s.genreOptions.forEach(function (gi) {
+      var g = cfg.genres[gi], v = 0, sid;
+      for (sid = 0; sid < 9; sid++) if (spaceOf(sid) === g.space) v += cfg.scenes[sid].n * cfg.genreBonus;
+      v -= cfg.dist[g.vuln].n * cfg.vulnPlus * 0.6;
+      v += s.rng() * 0.01;
+      if (v > bv) { bv = v; best = gi; }
+    });
+    return best;
+  }
+
+  function runGame(cfg, bp, seed) {
+    var s = newGame(cfg, seed);
+    chooseGenre(s, botGenre(s));
+    chooseSetting(s, 0);
+    var guard = 0;
+    while (!s.over && guard++ < 2000) {
+      var r = fillStep(s);
+      while (r === 'dist' && !s.over) {
+        resolveDisturbance(s, botDisturb(s, bp));
+        r = s.over ? 'over' : fillStep(s);
+      }
+      if (s.over) break;
+      botPlay(s, bp);
+    }
+    return s;
+  }
+
+  function newAgg() {
+    return {
+      n: 0, wins: 0, score: 0, turns: 0, deckLeft: 0, endings: {}, st: null, fullSlots: [0, 0, 0], storyLen: 0, allFull: 0
+    };
+  }
+  function addResult(agg, s) {
+    agg.n++;
+    if (s.win) agg.wins++;
+    agg.score += s.score;
+    agg.turns += s.turn;
+    agg.deckLeft += s.deck.length;
+    agg.storyLen += s.story.length;
+    var all = true;
+    for (var t = 0; t < 3; t++) {
+      if (slotsLeft(s, t) <= 0) agg.fullSlots[t]++; else all = false;
+    }
+    if (all) agg.allFull++;
+    var e = endingName(s);
+    agg.endings[e] = (agg.endings[e] || 0) + 1;
+    if (!agg.st) {
+      agg.st = clone(s.st);
+      agg.st.dHit = s.st.dHit.slice(); agg.st.scenePlays = s.st.scenePlays.slice(); agg.st.pageType = s.st.pageType.slice();
+    } else {
+      for (var k in s.st) {
+        if (Array.isArray(s.st[k])) s.st[k].forEach(function (v, i) { agg.st[k][i] += v; });
+        else agg.st[k] += s.st[k];
+      }
+    }
+  }
+  function runBatch(cfg, bp, n, seed0) {
+    var agg = newAgg();
+    for (var i = 0; i < n; i++) addResult(agg, runGame(cfg, bp, seed0 + i * 7919));
+    return agg;
+  }
+
+  var API = {
+    SPACES: SPACES, SPACE_ROLE: SPACE_ROLE, POSTURES: POSTURES, POSTURE_LENS: POSTURE_LENS, ENT: ENT,
+    DIST_NAMES: DIST_NAMES, CTR_NAMES: CTR_NAMES, TRACE_INFO: TRACE_INFO,
+    ENDINGS: ENDINGS,
+    defaultConfig: defaultConfig, clone: clone, deckSize: deckSize, pageCountByType: pageCountByType, overlapRate: overlapRate,
+    spaceOf: spaceOf, postureOf: postureOf, sceneName: sceneName, entList: entList, mk: mk,
+    newGame: newGame, chooseGenre: chooseGenre, chooseSetting: chooseSetting, fillStep: fillStep, resolveDisturbance: resolveDisturbance,
+    distCosts: distCosts, traceCosts: traceCosts, counterIndex: counterIndex, canPlay: canPlay, previewPage: previewPage,
+    slotsLeft: slotsLeft, slotsUsed: slotsUsed, shares: shares,
+    doPlay: doPlay, endingName: endingName, traceOk: traceOk, lastStory: lastStory,
+    suggestPlay: suggestPlay, botDisturb: botDisturb, botGenre: botGenre, runGame: runGame, runBatch: runBatch,
+    newAgg: newAgg, addResult: addResult, mulberry32: mulberry32
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = API;
+  else root.Engine = API;
+})(typeof window !== 'undefined' ? window : this);
+
+</script>
+<script>
+(function () {
+  'use strict';
+/* ================= 그래픽: 평면 도형과 별색 =================
+   레퍼런스(낭시 오페라 포스터, 네덜란드 리소 카드, 1968 면세 안내서)에서 가져온 규칙
+   - 한 장에 도형 하나를 크게, 색은 별색 몇 개만, 윤곽선 없이 평평하게
+   - 도형의 색은 정보를 담는다: 금색=인물, 주황=사건, 초록=배경
+   - 그림 안의 색(gx-*)은 라이트/다크와 상관없이 고정이고, 글자와 선은 테마 토큰을 따라가요 */
+var G = (function () {
+  var FIELD = ['k-gold', 'k-orange', 'k-green'];   // 공간(책상·침대·바닥) = 인물·사건·배경의 바탕색
+
+  function svg(w, h, inner, cls, label) {
+    return '<svg class="gx ' + (cls || '') + '" viewBox="0 0 ' + w + ' ' + h + '" ' +
+      (label ? 'role="img" aria-label="' + label + '"' : 'aria-hidden="true"') + ' focusable="false">' + inner + '</svg>';
+  }
+
+  /* ---- 자리 카드: 무엇을 읽는지(인물·사건·배경) × 어떤 렌즈로 읽는지(분위기·감정 / 욕망 / 관계) ----
+     책상·침대·바닥이라는 방 안의 자리는 이름뿐이고, 그림은 읽는 대상과 렌즈를 보여 줘요.
+     대상(왼쪽): 인물=사람, 사건=터지는 별, 배경=언덕과 해
+     렌즈(오른쪽): 앉기 · 분위기·감정=물결, 눕기 · 욕망=점선으로 이어진 과녁, 서기 · 관계=이어진 짝 */
+  function burst(cx, cy, R, r, n, cls) {
+    var p = [], i, a, rad;
+    for (i = 0; i < 2 * n; i++) {
+      a = i * Math.PI / n - Math.PI / 2; rad = i % 2 ? r : R;
+      p.push((cx + rad * Math.cos(a)).toFixed(1) + ',' + (cy + rad * Math.sin(a)).toFixed(1));
+    }
+    return '<polygon points="' + p.join(' ') + '" class="' + cls + '"/>';
+  }
+  // 대상 하나. inv가 true면 잉크색(짝으로 놓는 쪽)
+  function subject(sp, cx, inv) {
+    var main = inv ? 'k-ink' : 'k-paper', sub = inv ? 'k-paper' : 'k-ink', cy = 33;
+    if (sp === 0) {            // 인물: 머리 원 + 어깨
+      return '<circle cx="' + cx + '" cy="' + (cy - 12) + '" r="7" class="' + main + '"/>' +
+        '<path d="M' + (cx - 12) + ' ' + (cy + 19) + ' V' + (cy + 8) + ' A12 12 0 0 1 ' + (cx + 12) + ' ' + (cy + 8) + ' V' + (cy + 19) + ' Z" class="' + main + '"/>';
+    }
+    if (sp === 1) {            // 사건: 터지는 별
+      return burst(cx, cy, 20, 10.5, 8, main) + '<circle cx="' + cx + '" cy="' + cy + '" r="3.6" class="' + sub + '"/>';
+    }
+    return '<circle cx="' + (cx + 14) + '" cy="' + (cy - 10) + '" r="6" class="k-yellow"/>' +   // 배경: 언덕과 해
+      '<path d="M' + (cx - 24) + ' 52 A24 24 0 0 1 ' + (cx + 24) + ' 52 Z" class="' + main + '"/>' +
+      '<path d="M' + (cx + 2) + ' 52 A14 14 0 0 1 ' + (cx + 30) + ' 52 Z" class="' + sub + '"/>';
+  }
+  function lens(po, sp) {
+    if (po === 0) {            // 분위기·감정: 공기처럼 흐르는 물결 세 줄
+      var h = '', y;
+      for (y = 20; y <= 44; y += 12) h += '<path d="M72 ' + y + ' q4.5 -7 9 0 t9 0 t9 0 t9 0" class="s-line"/>';
+      return h;
+    }
+    if (po === 1) {            // 욕망: 점선이 닿으려는 과녁
+      return '<path d="M72 46 Q86 46 94 28" class="s-line" stroke-dasharray="0.5 7"/>' +
+        '<circle cx="99" cy="20" r="9" class="k-yellow"/><circle cx="99" cy="20" r="3.4" class="k-ink"/>';
+    }
+    return '<path d="M58 36 H70" class="s-line"/>' + subject(sp, sp === 2 ? 88 : 94, true);   // 관계: 짝과 이어진 모습
+  }
+  function seatInner(sid) {
+    var sp = Math.floor(sid / 3), po = sid % 3;
+    return subject(sp, po === 2 ? 32 : 36, false) + lens(po, sp);
+  }
+  function seat(sid, cls) {
+    var sp = Math.floor(sid / 3);
+    return svg(120, 64, '<rect width="120" height="64" rx="6" class="' + FIELD[sp] + '"/>' + seatInner(sid), 'g-seat ' + (cls || ''));
+  }
+
+  /* ---- 등장하는 것들 (A 원, B 마름모, ① 아치, ② 삼각형) ---- */
+  // 색 바탕 위의 도형 (고정 색). 글자는 도형 안에.
+  function entOnField(i, cx, cy, s) {
+    var t = s || 1, h = '', tx = cx, ty = cy + 4.5 * t;
+    if (i === 0) h = '<circle cx="' + cx + '" cy="' + cy + '" r="' + 15 * t + '" class="k-paper"/>';
+    else if (i === 1) h = '<polygon points="' + cx + ',' + (cy - 18 * t) + ' ' + (cx + 17 * t) + ',' + cy + ' ' + cx + ',' + (cy + 18 * t) + ' ' + (cx - 17 * t) + ',' + cy + '" class="k-ink"/>';
+    else if (i === 2) h = '<path d="M' + (cx - 14 * t) + ' ' + (cy + 18 * t) + ' V' + (cy - 4 * t) + ' A' + 14 * t + ' ' + 14 * t + ' 0 0 1 ' + (cx + 14 * t) + ' ' + (cy - 4 * t) + ' V' + (cy + 18 * t) + ' Z" class="k-paper"/>';
+    else { h = '<polygon points="' + cx + ',' + (cy - 17 * t) + ' ' + (cx + 17 * t) + ',' + (cy + 17 * t) + ' ' + (cx - 17 * t) + ',' + (cy + 17 * t) + '" class="k-ink"/>'; ty = cy + 13 * t; }
+    var tc = (i === 0 || i === 2) ? 'k-ink' : 'k-paper';
+    return h + '<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="' + 13 * t + '" font-weight="700" class="' + tc + '">' + ['A', 'B', '①', '②'][i] + '</text>';
+  }
+  // 페이지 카드의 그림 칸: 유형 색 바탕에 등장하는 도형을 가로로 놓아요
+  function pageBlock(type, mask) {
+    var list = [], i;
+    for (i = 0; i < 4; i++) if (mask & (1 << i)) list.push(i);
+    var h = '<rect width="190" height="62" rx="6" class="' + FIELD[type] + '"/>' + '<rect x="0" y="50" width="190" height="12" fill="url(#pt-dot)" opacity=".5"/>';
+    if (!list.length) h += '<circle cx="95" cy="28" r="14" fill="none" class="s-ink" stroke-dasharray="3 4"/>';
+    list.forEach(function (e, k) { h += entOnField(e, 190 * (k + 1) / (list.length + 1), 28); });
+    return svg(190, 62, h, 'g-pageblock', list.length ? '등장: ' + list.map(function (e) { return ['A', 'B', '①', '②'][e]; }).join(', ') : '등장하는 것이 없어요');
+  }
+  // 글 옆에 놓는 작은 범례 도형 (테마 색을 따라가요)
+  function ent(i, size) {
+    var h = '';
+    if (i === 0) h = '<circle cx="12" cy="12" r="9" class="gl-bg gl-line"/>';
+    else if (i === 1) h = '<polygon points="12,2 22,12 12,22 2,12" class="gl-ink"/>';
+    else if (i === 2) h = '<path d="M4 21 V11 A8 8 0 0 1 20 11 V21 Z" class="gl-bg gl-line"/>';
+    else h = '<polygon points="12,3 22,21 2,21" class="gl-ink"/>';
+    var s = size || 16;
+    return '<svg class="gx g-ent" viewBox="0 0 24 24" width="' + s + '" height="' + s + '" aria-hidden="true" focusable="false">' + h + '</svg>';
+  }
+
+  /* ---- 방해와 무마: 아이콘 하나씩 ---- */
+  function distInner(did, fld) {
+    if (did === 0) return '<rect x="45" y="6" width="30" height="52" rx="7" class="k-paper"/><rect x="50" y="13" width="20" height="30" rx="2" class="k-blue"/><circle cx="60" cy="50" r="2.6" class="k-ink"/>' +
+      '<path d="M32 22 q-7 10 0 20 M24 16 q-13 16 0 32" class="s-line"/><path d="M88 22 q7 10 0 20 M96 16 q13 16 0 32" class="s-line"/>';
+    if (did === 1) return '<circle cx="42" cy="33" r="20" class="k-yellow"/><circle cx="52" cy="27" r="17" class="' + fld + '"/>' +
+      '<text x="76" y="30" font-size="20" font-weight="700" class="k-paper">z</text><text x="92" y="20" font-size="14" font-weight="700" class="k-paper">z</text><text x="102" y="46" font-size="11" font-weight="700" class="k-paper">z</text>';
+    if (did === 2) return '<rect x="22" y="14" width="32" height="38" rx="2" class="k-paper"/><g transform="rotate(5 76 33)"><rect x="58" y="14" width="32" height="38" rx="2" class="k-paper"/></g>' +
+      '<rect x="27" y="21" width="22" height="2" class="k-ink"/><rect x="27" y="27" width="22" height="2" class="k-ink"/><rect x="27" y="33" width="14" height="2" class="k-ink"/>' +
+      '<path d="M100 8 h9 v34 l-4.5 -5 l-4.5 5 z" class="k-orange"/>';
+    if (did === 3) return '<circle cx="26" cy="33" r="7" class="k-paper"/><path d="M42 21 a16 16 0 0 1 0 24 M54 13 a28 28 0 0 1 0 40 M66 5 a40 40 0 0 1 0 56" class="s-line"/>' +
+      '<rect x="84" y="12" width="24" height="42" rx="1" class="k-paper"/><rect x="88" y="16" width="16" height="34" class="' + fld + '"/><circle cx="101" cy="34" r="1.8" class="k-paper"/>';
+    return '<g transform="rotate(34 57 30)"><rect x="30" y="24" width="50" height="12" class="k-yellow"/><polygon points="80,24 80,36 92,30" class="k-paper"/><polygon points="88.5,27.6 88.5,32.4 92,30" class="k-ink"/><rect x="22" y="24" width="8" height="12" class="k-orange"/></g>' +
+      '<path d="M60 55 q6 -9 11 0 t11 0 t11 0 t11 0" class="s-line"/>';
+  }
+  // 방해 카드는 검은 바탕, 무마 카드는 초록 바탕
+  function dist(did, counter) {
+    var fld = counter ? 'k-green' : 'k-dist';
+    return svg(120, 64, '<rect width="120" height="64" rx="6" class="' + fld + '"/>' + (counter ? '' : '<rect x="0" y="0" width="120" height="64" rx="6" fill="url(#pt-dotw)" opacity=".16"/>') + distInner(did, fld), 'g-dist');
+  }
+
+  /* ---- 장르: 포스터처럼 큼직한 도형 하나 ---- */
+  function genreShape(gi) {
+    switch (gi % 7) {
+      case 0: return '<path d="M18 52 C10 30 38 14 60 20 C84 26 92 46 84 66 C76 86 40 90 26 76 C20 70 20 60 18 52 Z"/>';
+      case 1: return '<rect x="46" y="6" width="8" height="30"/><polygon points="50,28 92,80 8,80"/>';
+      case 2: return '<circle cx="50" cy="32" r="20"/><path d="M12 90 C12 64 30 54 50 54 C70 54 88 64 88 90 Z"/>';
+      case 3: return '<path d="M8 80 A42 42 0 0 1 92 80 Z"/>';
+      case 4: return '<path d="M12 84 V42 L50 14 L88 42 V84 Z"/>';
+      case 5: return '<circle cx="32" cy="50" r="24"/><rect x="48" y="43" width="46" height="14"/><rect x="76" y="57" width="8" height="12"/><rect x="88" y="57" width="6" height="9"/>';
+      default: return '<path d="M12 86 V30 H88 V86 H68 V52 H32 V86 Z"/>';
+    }
+  }
+  function genre(gi, space, w, h) {
+    var s = '<g class="' + (typeof space === 'string' ? space : FIELD[space]) + '">' + genreShape(gi) + '</g>';
+    return '<svg class="gx g-genre" viewBox="0 0 100 100" preserveAspectRatio="xMinYMid meet" width="' + (w || 100) + '" height="' + (h || 100) + '" aria-hidden="true" focusable="false">' + s + '</svg>';
+  }
+
+  /* ---- 결과 도장: 이기면 파란 원에 체크, 지면 테두리만 있는 원에 줄 ---- */
+  function verdict(win) {
+    var h = win
+      ? '<circle cx="50" cy="50" r="44" class="k-blue"/><path d="M28 52 L44 68 L74 34" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>'
+      : '<circle cx="50" cy="50" r="40" fill="none" class="s-fg" stroke-width="8"/><rect x="28" y="46" width="44" height="8" rx="4" class="k-fg"/>';
+    return '<svg class="gx g-verdict" viewBox="0 0 100 100" width="88" height="88" aria-hidden="true" focusable="false">' + h + '</svg>';
+  }
+
+  /* ---- 한 판의 머리말에 놓는 세 장 (책상 앉기 · 침대 눕기 · 바닥 서기) ---- */
+  function mast() {
+    return '<div class="mast-art" aria-hidden="true">' + seat(0) + seat(4) + seat(8) + '</div>';
+  }
+
+  return { verdict: verdict, seat: seat, pageBlock: pageBlock, ent: ent, dist: dist, genre: genre, mast: mast, FIELD: FIELD };
+})();
+
+  var E = window.Engine;
+  var BASE = E.defaultConfig();
+  var ENT_KEYS = ['A', 'B', 'p1', 'p2'];
+  var KEY = 'reading-room-save-v1';
+
+  function $(q, r) { return (r || document).querySelector(q); }
+  function $$(q, r) { return Array.prototype.slice.call((r || document).querySelectorAll(q)); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* ---------- 상태 ----------
+     P.s는 엔진의 판 상태예요. 같은 판 번호에서 같은 행동(P.acts)을 차례로 하면 늘 같은 판이 되기 때문에,
+     저장할 때는 판 번호 + 행동 + 쓴 글만 저장하고, 불러올 때 그대로 다시 해 봐요. */
+  var P = {
+    s: null, started: false, sel: -1, log: [], hint: false, hideEmpty: true, openFrag: {},
+    settingSel: -1, names: { A: '', B: '', p1: '', p2: '' }, seedUsed: 0, acts: [],
+    sheet: -1, sheetMode: 'new', sheetNote: '', dlg: '', save: null,
+    shown: {}, fanShown: false, seatSeen: null, layerKey: '', screen: '', logOpen: false, rulesOpen: false, editOpen: undefined
+  };
+  function C() { return (P.s && P.s.cfg) || BASE; }
+  function logAdd(m) { P.log.unshift(m); if (P.log.length > 40) P.log.pop(); }
+  var seenCards = (typeof WeakSet === 'function') ? new WeakSet() : { has: function () { return true; }, add: function () {} };
+
+  /* 안내문의 [[힌트]]를 빈칸으로 나눠요 */
+  function parseTpl(text) {
+    var out = [], re = /\[\[(.*?)\]\]/g, last = 0, m;
+    text = String(text || '');
+    while ((m = re.exec(text))) {
+      if (m.index > last) out.push({ t: 'text', v: text.slice(last, m.index) });
+      out.push({ t: 'blank', v: m[1] });
+      last = re.lastIndex;
+    }
+    if (last < text.length) out.push({ t: 'text', v: text.slice(last) });
+    return out;
+  }
+  function nameOf(s, idx) { return (s && s.names && s.names[ENT_KEYS[idx]]) || ''; }
+  function namify(s, escText) {
+    return escText.replace(/[AB①②]/g, function (ch) {
+      var nm = nameOf(s, E.ENT.indexOf(ch));
+      return nm ? ch + '<span class="nm">(' + esc(nm) + ')</span>' : ch;
+    });
+  }
+  function cardTextHTML(text) {
+    return parseTpl(text).map(function (x) { return x.t === 'text' ? esc(x.v) : '<span class="bl">' + esc(x.v) + '</span>'; }).join('');
+  }
+  function blankCount(text) { return parseTpl(text).filter(function (x) { return x.t === 'blank'; }).length; }
+  // 쌓은 페이지의 안내문 한 줄. 쓴 내용은 문장 안에 바로 보여요.
+  function sentHTML(s, i, which) {
+    var e = s.story[i], pc = s.cfg.pageCards[e.pi] || { text: '' };
+    var text = which === 0 ? pc.text : s.cfg.posturePrompts[E.postureOf(e.sid)];
+    var k = which === 0 ? 0 : blankCount(pc.text), h = '';
+    parseTpl(text).forEach(function (x) {
+      if (x.t === 'text') h += namify(s, esc(x.v));
+      else {
+        var v = (e.fills[k] || '').trim();
+        h += v ? '<mark class="fv">' + esc(v) + '</mark>' : '<span class="bl">' + esc(x.v) + '</span>';
+        k++;
+      }
+    });
+    return h;
+  }
+
+  /* ---- 이야기를 책처럼 이어 읽기 ---- */
+  function hasBatchim(w) {
+    var c = w.charCodeAt(w.length - 1);
+    return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0;
+  }
+  function fixJosa(w, j) {
+    var b = hasBatchim(w);
+    if (j === '은' || j === '는') return b ? '은' : '는';
+    if (j === '을' || j === '를') return b ? '을' : '를';
+    if (j === '와' || j === '과') return b ? '과' : '와';
+    if (j === '가') return b ? '이' : '가';
+    if (j === '으로' || j === '로') { var c = w.charCodeAt(w.length - 1); return (b && (c - 0xAC00) % 28 !== 8) ? '으로' : '로'; }
+    return j;
+  }
+  function roleOf(s, i) { var st = s.setting; return st ? [st.A, st.B, st.p1, st.p2][i] : ''; }
+  // 안내문 속 A·B·①·②를 이름(없으면 역할)으로 바꾸고 조사를 맞춰요
+  function bookSubst(s, text) {
+    return text.replace(/([AB①②])(으로|로|은|는|을|를|와|과|가)?/g, function (m, ch, j) {
+      var i = E.ENT.indexOf(ch), w = nameOf(s, i) || roleOf(s, i) || ch;
+      return w + (j ? fixJosa(w, j) : '');
+    });
+  }
+  // 빈칸에 쓴 글의 받침에 맞춰 뒤따르는 '을/를', '(이)었다' 같은 표지를 바꿔요
+  function resolveLead(w, text) {
+    var base = String(w || '').replace(/[\s.,!?'"”’“‘)\]]+$/, ''), b = base ? hasBatchim(base) : false;
+    var last = base ? base.charCodeAt(base.length - 1) : 0, rieul = b && (last - 0xAC00) % 28 === 8;
+    return text.replace(/^(을\/를|은\/는|이\/가|와\/과|으로\/로|\(이\)었다|\(이\)라고|\(이\)다)/, function (m) {
+      switch (m) {
+        case '을/를': return b ? '을' : '를';
+        case '은/는': return b ? '은' : '는';
+        case '이/가': return b ? '이' : '가';
+        case '와/과': return b ? '과' : '와';
+        case '으로/로': return (b && !rieul) ? '으로' : '로';
+        case '(이)었다': return b ? '이었다' : '였다';
+        case '(이)라고': return b ? '이라고' : '라고';
+        default: return b ? '이다' : '다';
+      }
+    });
+  }
+  // 문장 나누기: 마침표 다음에 따옴표나 빈칸이 바로 이어지면 앞 문장에 붙여요 (앞말만 덜렁 남지 않게)
+  function clauses(text) { return String(text).match(/(?:[^.]|\.(?=\s*(?:“|\[\[)))+\.?/g) || []; }
+  function proseFor(s, e, hideEmpty) {
+    var pc = s.cfg.pageCards[e.pi] || { text: '' };
+    var texts = [pc.text, s.cfg.posturePrompts[E.postureOf(e.sid)]], k = 0, out = [];
+    texts.forEach(function (t) {
+      clauses(t).forEach(function (cl) {
+        var nb = 0, filled = 0, str = '', lastFill = null;
+        parseTpl(cl).forEach(function (x) {
+          if (x.t === 'text') {
+            var seg = lastFill !== null ? resolveLead(lastFill, x.v) : x.v;
+            str += bookSubst(s, seg); lastFill = null;
+          } else {
+            var v = (e.fills[k] || '').trim(); nb++; k++;
+            if (v) { filled++; str += v; lastFill = v; } else { str += '…'; lastFill = ''; }
+          }
+        });
+        if (hideEmpty && nb > 0 && filled === 0) return;
+        str = str.trim();
+        if (!str) return;
+        if (!/[.!?…。”’)]$/.test(str)) str += '.';
+        out.push(str.replace(/([.!?])\.+/g, '$1'));
+      });
+    });
+    return out.join(' ');
+  }
+  function bookParas(s) {
+    var paras = [];
+    s.story.forEach(function (e) {
+      var parts = [], note = (e.note || '').trim();
+      if (note) parts.push(note);
+      var body = proseFor(s, e, P.hideEmpty);
+      if (body) parts.push(body);
+      if (parts.length) paras.push(parts.join(' '));
+    });
+    return paras;
+  }
+  function bookTitle(s) { return s.setting ? s.setting.line : s.genre.name; }
+  function bookHTML(s) {
+    var paras = bookParas(s);
+    var h = '<div class="book-cover">' + G.genre(s.genreIdx, G.FIELD[s.genre.space], 92, 92) + '</div><div class="book-genre">' + esc(s.genre.name) + '</div><h3 class="book-title">' + esc(bookTitle(s)) + '</h3>';
+    if (!paras.length) return h + '<p class="book-empty">아직 이어 읽을 글이 없어요. 아래에서 빈칸을 채워 보세요.</p>';
+    paras.forEach(function (p) { h += '<p>' + esc(p) + '</p>'; });
+    return h;
+  }
+  function bookText(s) { return bookTitle(s) + '\n\n' + bookParas(s).join('\n\n') + '\n'; }
+
+
+  // 규칙 설명 (수치 탭과 직접 플레이 탭에서 같이 써요)
+  function rulesHTML(c) {
+    var sl = c.slots;
+    var slotLine = '이야기 판에는 종류별 칸이 있어요 (인물 ' + sl[0] + ' · 사건 ' + sl[1] + ' · 배경 ' + sl[2] + '). ' +
+      (c.slotLock ? '칸이 가득 찬 종류는 더 낼 수 없어요.' : '칸이 가득 찬 종류도 낼 수는 있어요. 다만 이야기가 한쪽으로 쏠려서 ' + overResult(c, c.slotOverPenalty) + '.');
+    return '<div class="rules-body">' +
+      '<h3>카드 내기</h3><ul>' +
+      '<li>자리 카드를 내면 점수를 받고 덱이 줄어요. 그 자리가 읽을 수 있는 페이지의 종류가 정해져요. 책상은 인물, 침대는 사건, 바닥은 배경 페이지예요.</li>' +
+      '<li>페이지 카드는 지금 자리와 같은 종류만 낼 수 있어요. 다른 종류를 읽고 싶으면 그 종류의 자리 카드를 먼저 내서 자리를 옮겨요.</li>' +
+      '<li>' + slotLine + '</li>' +
+      '<li>한 자리에서 읽기 한도를 넘기면 그 페이지는 ' + overResult(c, c.overPenalty) + '.</li>' +
+      '<li>한도나 칸을 넘겼다고 점수가 마이너스가 되지는 않아요. 그 페이지에서 얻는 점수가 줄거나 사라질 뿐이에요.</li></ul>' +
+      '<h3>이음</h3><p>직전 페이지와 겹치는 인물·장소(A, B, ①, ②)가 하나도 없는 페이지를 내면 이음 한 줄을 써야 하고, 덱이 ' + c.bridgeCost + '장 줄어요.</p>' +
+      '<h3>방해와 흔적</h3>' +
+      '<p>방해 카드는 뽑는 즉시 처리해요. 무마 카드로 막거나, 점수·덱·반납 중 하나를 그대로 치르거나, 흔적을 받아요.</p>' +
+      '<p><b>흔적은 방해의 비용을 절반으로 줄이는 대신, 방해가 이야기 속에 남기는 자국이에요.</b> 받으면 다음에 낼 페이지 한 장에 조건이 붙어요.</p>' +
+      '<ul><li><b>쓸 때의 조건</b>은 글에 거는 규칙이에요. 예를 들어 바깥 소리 흔적이면 그 한 줄에 소리나 외부의 개입이 들어가야 해요.</li>' +
+      '<li><b>게임 규칙</b>은 같은 조건을 카드로 확인하는 규칙이에요. 게임이 글을 읽을 수 없어서 대신 쓰는 장치이고, 어기면 ' + c.violationPenalty + '점이 깎여요.</li>' +
+      '<li>흔적이 걸린 페이지에는 \'흔적 한 줄\' 칸이 생겨요. 거기에 쓴 글은 점수에 영향이 없고, 완성된 이야기에서 그 페이지의 첫 문장이 돼요. 이음이 필요한 페이지라면 이음 한 줄과 한 칸이에요.</li>' +
+      '<li>흔적은 한 번에 하나만 가질 수 있고, 다음 페이지를 내면 사라져요. 한 판에서 두 번 이상 받고 이기면 \'흔적을 안고 마무리한다\' 엔딩이 나와요.</li></ul>' +
+      '<h3>끝</h3><p>낼 카드가 없거나 내고 싶지 않으면 손패 1장을 버리고 넘겨요. 목표 점수 ' + c.target + '점에 닿으면 바로 이기고, 덱이 0장이 되면 져요.</p></div>';
+  }
+
+  // 한도·칸을 넘겨 읽은 페이지가 얼마를 얻는지 말로 풀어 줘요 (0 밑으로는 내려가지 않아요)
+  function overResult(c, pen) {
+    var left = Math.max(0, c.pagePts - pen);
+    return left <= 0 ? '점수를 얻지 못해요 (0점)' : '점수가 ' + left + '점으로 줄어요';
+  }
+
+  // 손패의 페이지 카드가 왜 흐리게 보이는지 (또는 무슨 대가가 있는지) 카드 위에 바로 보여 줘요
+  function pageFlag(s, c) {
+    if (c.t !== 'page' || s.phase !== 'play') return null;
+    if (!s.scene) return { txt: '자리 카드를 먼저 내요', kind: 'off' };
+    if (E.spaceOf(s.scene.sid) !== c.type) return { txt: E.SPACES[c.type] + ' 자리에서 읽어요', kind: 'off' };
+    if (E.slotsLeft(s, c.type) <= 0) return s.cfg.slotLock ? { txt: '칸 가득 · 못 내요', kind: 'off' } : { txt: Math.max(0, s.cfg.pagePts - s.cfg.slotOverPenalty) <= 0 ? '칸 가득 · 점수 없음' : '칸 가득 · 점수 줄어요', kind: 'warn' };
+    return null;
+  }
+
+
+  function previewText(s, i) {
+    var c = s.hand[i], cp = E.canPlay(s, i);
+    if (c.t === 'scene') {
+      var sc = C().scenes[c.sid], bonus = (s.genre.space === E.spaceOf(c.sid)) ? C().genreBonus : 0;
+      return '자리 카드: +' + (sc.B + bonus) + '점' + (bonus ? ' (장르 보너스 +' + bonus + ' 포함)' : '') + ', 덱 −' + sc.E + '. 읽기 횟수가 0으로 돌아가요.';
+    }
+    if (c.t === 'page') {
+      if (!cp.ok) return cp.why + '.';
+      var pv = E.previewPage(s, i), sc2 = C().scenes[s.scene.sid], bits = [];
+      bits.push((pv.gain >= 0 ? '+' + pv.gain : '−' + Math.abs(pv.gain)) + '점');
+      bits.push('덱 −' + sc2.R + ' (읽기)');
+      if (pv.bridged) bits.push(pv.waived ? '이음 한 줄 필요, 비용 면제(졸음 흔적)' : '이음 한 줄 필요, 덱 −' + C().bridgeCost);
+      if (pv.over) bits.push('읽기 한도를 넘었어요');
+      if (pv.traceDid >= 0) bits.push(pv.viol ? '흔적 조건을 어겨요 −' + C().violationPenalty + '점' : '흔적 조건을 지켜요');
+      if (pv.slotOver) bits.push(E.SPACE_ROLE[c.type] + ' 칸이 가득 찼어요 (' + C().slots[c.type] + '/' + C().slots[c.type] + ')');
+      else bits.push(E.SPACE_ROLE[c.type] + ' 칸 ' + (E.slotsUsed(s, c.type) + 1) + '/' + C().slots[c.type]);
+      return '페이지: ' + bits.join(' · ');
+    }
+    return '무마 카드는 해당 방해가 올 때 쓰는 카드예요. 지금은 버리기만 할 수 있어요.';
+  }
+
+
+  // 한 장면(쌓은 페이지 하나): 안내문 두 줄과, 칸마다 넓게 주어진 쓰는 칸
+  function fragHTML(s, e, i, fold) {
+    var pc = s.cfg.pageCards[e.pi] || { text: '' }, pt = s.cfg.posturePrompts[E.postureOf(e.sid)];
+    var h = '<li class="frag pg' + e.type + '"><div class="fh"><b>' + (i + 1) + '</b><span>' + E.sceneName(e.sid) + ' · ' + E.SPACE_ROLE[e.type] + '</span><span class="ents">' + E.entList(e.mask).map(function (ch) { return '<span class="eg">' + G.ent(E.ENT.indexOf(ch), 14) + ch + '</span>'; }).join('') + '</span>';
+    if (e.bridged) h += '<span class="tag br">이음</span>';
+    if (e.traceDid >= 0) h += '<span class="tag ' + (e.traceViol ? 'bad' : 'tr') + '">흔적 · ' + E.DIST_NAMES[e.traceDid] + (e.traceViol ? ' 위반' : '') + '</span>';
+    h += '</div>';
+    h += '<p class="sent" data-sent="' + i + ':0">' + sentHTML(s, i, 0) + '</p>';
+    h += '<p class="sent pos" data-sent="' + i + ':1">' + sentHTML(s, i, 1) + '</p>';
+    var k = 0, nBlank = 0, nFilled = 0, inner = '';
+    inner += '<div class="wgrid">';
+    parseTpl(pc.text).concat(parseTpl(pt)).forEach(function (x) {
+      if (x.t !== 'blank') return;
+      inner += '<label class="wf"><span>' + esc(x.v) + '</span><textarea rows="1" data-fill="' + i + ':' + k + '" placeholder="여기에 써요" aria-label="' + (i + 1) + '번째 페이지 ' + esc(x.v) + '">' + esc(e.fills[k] || '') + '</textarea></label>';
+      nBlank++; if ((e.fills[k] || '').trim()) nFilled++;
+      k++;
+    });
+    inner += '</div>';
+    if (e.bridged || e.traceDid >= 0) {
+      var why = e.bridged ? '이음 한 줄 (앞 페이지와 이어 주는 말)' : '흔적 한 줄';
+      var extra = e.traceDid >= 0 ? ' · ' + E.TRACE_INFO[e.traceDid].story : '';
+      var ph = e.traceDid >= 0 ? '방해가 이 장면에 남긴 흔적을 한 줄로 써요. 이야기에서 이 페이지의 첫 문장이 돼요.' : '앞 페이지와 이어 주는 말을 한 줄로 써요. 이야기에서 이 페이지의 첫 문장이 돼요.';
+      inner += '<label class="wf wide"><span>' + esc(why + extra) + '</span><textarea rows="2" data-note="' + i + '" placeholder="' + esc(ph) + '" aria-label="' + (i + 1) + '번째 페이지 ' + esc(why) + '">' + esc(e.note) + '</textarea></label>';
+    }
+    if (fold) {
+      var isOpen = (P.openFrag[i] !== undefined) ? P.openFrag[i] : (i === s.story.length - 1);
+      h += '<details class="fedit" data-frag="' + i + '"' + (isOpen ? ' open' : '') + '><summary>쓰기 · 고치기 (' + nFilled + '/' + nBlank + '칸 채움)</summary>' + inner + '</details>';
+    } else h += inner;
+    return h + '</li>';
+  }
+
+
+
+  /* ---------- 저장 ---------- */
+  function lsGet() { try { var r = localStorage.getItem(KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  function lsSet(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { /* 저장이 막힌 곳에서도 게임은 돼요 */ } }
+  function lsDel() { try { localStorage.removeItem(KEY); } catch (e) { /* 무시 */ } }
+  var saveT = 0;
+  function snapshot() {
+    var s = P.s;
+    return {
+      v: 1, seed: P.seedUsed, acts: P.acts,
+      story: s.story.map(function (e) { var f = []; for (var k = 0; k < e.fills.length; k++) f.push(e.fills[k] == null ? '' : String(e.fills[k])); return { f: f, n: e.note || '' }; }),
+      sheet: P.sheet, sheetMode: P.sheetMode, sheetNote: P.sheetNote, hint: P.hint, hide: P.hideEmpty,
+      sum: { over: s.over, win: s.win, score: s.score, turn: s.turn }
+    };
+  }
+  function saveNow() { clearTimeout(saveT); saveT = 0; if (!P.started || !P.s) return; lsSet(snapshot()); }
+  function scheduleSave() { clearTimeout(saveT); saveT = setTimeout(saveNow, 350); }
+  window.addEventListener('pagehide', saveNow);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) saveNow(); });
+
+  /* ---------- 행동 ----------
+     모든 게임 행동은 applyAct 하나를 지나요. 성공하면 {msg, info}, 안 되면 null이에요. */
+  function pageSummary(inf) {
+    return (inf.gain >= 0 ? '+' + inf.gain : '−' + Math.abs(inf.gain)) + '점 · 덱 −' + inf.deckCost +
+      (inf.bridged ? ' · 이음 한 줄 필요' : '') + (inf.over ? ' · 읽기 한도 초과' : '') + (inf.slotOver ? ' · 칸 초과' : '') +
+      (inf.traceDid >= 0 ? (inf.traceViol ? ' · 흔적 조건 위반' : ' · 흔적 조건 충족') : '');
+  }
+  function applyAct(a) {
+    var s = P.s, c, res, inf, msg = '', r;
+    switch (a.k) {
+      case 'genre':
+        if (s.phase !== 'genre' || s.genreOptions.indexOf(a.v) < 0) return null;
+        E.chooseGenre(s, a.v);
+        msg = '장르 카드: ' + s.genre.name;
+        break;
+      case 'setting':
+        if (s.phase !== 'setting' || !(s.genre.settings || [])[a.v]) return null;
+        E.chooseSetting(s, a.v, a.names);
+        msg = '설정: ' + s.setting.line;
+        break;
+      case 'adv':
+        if (s.phase !== 'draw') return null;
+        r = E.fillStep(s);
+        if (r === 'over') msg = s.win ? '목표 점수에 닿았어요.' : '덱이 바닥났어요.';
+        break;
+      case 'scene': case 'page': case 'pass':
+        c = s.hand[a.v];
+        if (!c || s.phase !== 'play') return null;
+        if (a.k === 'scene' && c.t !== 'scene') return null;
+        if (a.k === 'page' && (c.t !== 'page' || !E.canPlay(s, a.v).ok)) return null;
+        res = E.doPlay(s, a.k, a.v);
+        if (!res.ok) return null;
+        inf = res.info;
+        if (a.k === 'scene') msg = '자리 카드 ' + E.sceneName(c.sid) + ': +' + inf.gain + '점' + (inf.bonus ? ' (장르 보너스)' : '') + ', 덱 −' + inf.deckCost;
+        else if (a.k === 'page') {
+          var last = s.story[s.story.length - 1];
+          last.traceDid = inf.traceDid >= 0 ? inf.traceDid : -1;
+          last.traceViol = inf.traceDid >= 0 ? !!inf.traceViol : false;
+          msg = E.SPACE_ROLE[c.type] + ' 페이지 (' + E.entList(c.mask).join(' ') + '): ' + pageSummary(inf);
+        } else msg = '카드를 버렸어요: ' + (c.t === 'page' ? E.SPACE_ROLE[c.type] + ' 페이지' : c.t === 'scene' ? E.sceneName(c.sid) : E.CTR_NAMES[c.did]);
+        break;
+      case 'dist':
+        if (s.phase !== 'disturbance' || !s.pending) return null;
+        var ch = a.v === 'counter' ? { use: 'counter' } : { mode: a.v.split(':')[0], opt: a.v.split(':')[1] };
+        var before = { score: s.score, deck: s.deck.length, story: s.story.length }, pdid = s.pending.did, name = E.DIST_NAMES[pdid];
+        if (!E.resolveDisturbance(s, ch)) return null;
+        if (ch.use) msg = name + ' 방해를 ' + E.CTR_NAMES[pdid] + ' 카드로 막았어요.';
+        else {
+          var lab = { score: '점수 ' + (s.score - before.score), deck: '덱 ' + (s.deck.length - before.deck) + '장', 'return': '페이지 ' + (before.story - s.story.length) + '장 반납 (점수 ' + (s.score - before.score) + ')' };
+          msg = name + ' 방해: ' + lab[ch.opt] + (ch.mode === 'trace' ? ' · 흔적을 받았어요' : '');
+        }
+        break;
+      default: return null;
+    }
+    P.acts.push(a);
+    if (msg) logAdd(msg);
+    return { msg: msg, info: inf };
+  }
+
+  function startGame(seedArg) {
+    var seed = seedArg;
+    if (typeof seed !== 'number' || !isFinite(seed)) seed = Math.floor(Math.random() * 1e9);
+    P.s = E.newGame(E.clone(BASE), seed);
+    P.seedUsed = seed; P.acts = []; P.log = []; P.sel = -1; P.sheet = -1; P.dlg = ''; P.settingSel = -1;
+    P.names = { A: '', B: '', p1: '', p2: '' }; P.started = true; P.shown = {}; P.openFrag = {}; P.editOpen = undefined;
+    P.save = null; P.seatSeen = null; P.layerKey = '';
+    logAdd('새 판을 시작했어요. 덱 ' + P.s.size0 + '장, 목표 ' + P.s.cfg.target + '점.');
+    render();
+    saveNow();
+  }
+  function restore(sv) {
+    try {
+      var s = E.newGame(E.clone(BASE), sv.seed);
+      P.s = s; P.seedUsed = sv.seed; P.acts = []; P.log = []; P.sel = -1; P.dlg = ''; P.settingSel = -1; P.openFrag = {}; P.editOpen = undefined;
+      P.names = { A: '', B: '', p1: '', p2: '' };
+      logAdd('새 판을 시작했어요. 덱 ' + s.size0 + '장, 목표 ' + s.cfg.target + '점.');
+      for (var i = 0; i < sv.acts.length; i++) if (!applyAct(sv.acts[i])) throw new Error('replay ' + i);
+      (sv.story || []).forEach(function (x, j) {
+        var e = s.story[j];
+        if (!e) return;
+        e.fills = (x.f || []).map(function (v) { return v == null ? '' : String(v); });
+        e.note = x.n || '';
+      });
+      P.hint = !!sv.hint; P.hideEmpty = sv.hide !== false;
+      P.sheet = (sv.sheet >= 0 && s.story[sv.sheet]) ? sv.sheet : -1;
+      P.sheetMode = sv.sheetMode === 'edit' ? 'edit' : 'new'; P.sheetNote = sv.sheetNote || '';
+      if (s.phase === 'draw' && P.sheet < 0) applyAct({ k: 'adv' });
+      P.started = true; P.save = null;
+      P.shown = { genre: 1, setting: 1 };
+      s.hand.forEach(function (c) { seenCards.add(c); });
+      P.seatSeen = s.scene ? s.scene.card : null;
+      return true;
+    } catch (err) {
+      P.s = null; P.started = false; P.sheet = -1; P.acts = []; lsDel(); P.save = null;
+      return false;
+    }
+  }
+
+  /* ---------- 높이 맞추기·알림 ---------- */
+  function grow(el) {
+    if (!el || !el.scrollHeight) return;
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }
+  function growAll() { $$('textarea[data-fill], textarea[data-note]').forEach(grow); }
+  var toastT = 0;
+  function toast(msg) {
+    var el = $('#toast');
+    if (!el) return;
+    el.innerHTML = '<p></p>';
+    el.firstChild.textContent = msg;
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { el.innerHTML = ''; }, 3000);
+  }
+  function fresh(key) { if (P.shown[key]) return false; P.shown[key] = 1; return true; }
+
+  /* ---------- 조각들 ---------- */
+  function cardHTML(c, o) {
+    o = o || {};
+    var cls = ['card'], inner = '';
+    if (c.t === 'page') {
+      var pcd = C().pageCards[c.pi] || { text: '' }, link = '';
+      cls.push('page', 'sp' + c.type);
+      if (o.showLink && o.prev) {
+        var sh = E.entList(c.mask & o.prev.mask);
+        link = sh.length ? '<span class="c-link">앞 페이지와 이어져요 · ' + sh.join(' ') + '</span>' : '<span class="c-link need">앞 페이지와 이어지지 않아요 · 이음 필요</span>';
+      }
+      inner = '<span class="c-top"><span class="c-no">' + (c.pi + 1) + '</span><span class="c-type">' + E.SPACE_ROLE[c.type] + '</span></span>' + G.pageBlock(c.type, c.mask) + '<span class="c-text">' + cardTextHTML(pcd.text) + '</span>' + link +
+        (o.flag ? '<span class="c-flag ' + o.flag.kind + '">' + esc(o.flag.txt) + '</span>' : '');
+    } else if (c.t === 'scene') {
+      var sc = C().scenes[c.sid], sp = E.spaceOf(c.sid);
+      cls.push('scene', 'sp' + sp);
+      inner = G.seat(c.sid) + '<span class="c-top"><b>' + E.sceneName(c.sid) + '</b><i>' + E.SPACE_ROLE[sp] + ' · ' + E.POSTURE_LENS[E.postureOf(c.sid)] + '</i></span><span class="c-big">+' + sc.B + '</span><span class="c-bot">한도 ' + sc.L + ' · 읽기 −' + sc.R + '<br>진입 −' + sc.E + '</span>';
+    } else if (c.t === 'ctr') {
+      cls.push('ctr');
+      inner = G.dist(c.did, true) + '<span class="c-top"><b>무마</b><i>' + E.CTR_NAMES[c.did] + '</i></span><span class="c-bot">' + E.DIST_NAMES[c.did] + ' 방해를 막아요</span>';
+    } else {
+      cls.push('dist');
+      inner = G.dist(c.did, false) + '<span class="c-top"><b>방해</b><i>' + E.DIST_NAMES[c.did] + '</i></span><span class="c-bot">뽑는 즉시 처리해요</span>';
+    }
+    if (o.hint) cls.push('hint');
+    if (o.dim) cls.push('dim');
+    if (o.flip) cls.push('flip');
+    var isBtn = o.idx != null;
+    var open = isBtn ? 'button type="button" data-i="' + o.idx + '" aria-pressed="' + (o.sel ? 'true' : 'false') + '"' : 'div';
+    if (o.hint) open += ' data-hint="' + esc(o.hintLabel || '추천') + '"';
+    if (o.flip) open += ' style="--d:' + (o.d || 0) + '"';
+    return '<' + open + ' class="' + cls.join(' ') + '">' + inner + '</' + (isBtn ? 'button' : 'div') + '>';
+  }
+
+  function slotsHTML(s) {
+    var h = '<div class="slotrow" role="group" aria-label="이야기 판의 칸">';
+    for (var t = 0; t < 3; t++) {
+      var used = E.slotsUsed(s, t), max = s.cfg.slots[t], dots = '', k;
+      for (k = 0; k < Math.max(max, used); k++) dots += '<i class="' + (k < used ? 'on' : '') + '"></i>';
+      h += '<span class="slot t' + t + (used >= max ? ' full' : '') + '"><span class="lab">' + E.SPACE_ROLE[t] + '</span><span class="dots" aria-hidden="true">' + dots + '</span><span class="cnt">' + used + ' / ' + max + (used > max ? ' · 넘침' : used >= max ? ' · 가득 참' : '') + '</span></span>';
+    }
+    return h + '</div>';
+  }
+  function castHTML(s) {
+    if (!s.setting) return '';
+    var st = s.setting, roles = [st.A, st.B, st.p1, st.p2], i;
+    var h = '<div class="cast"><div class="premise">' + esc(s.genre.name) + ' · ' + esc(st.line) + '</div><div class="cast-items">';
+    for (i = 0; i < 4; i++) {
+      var nm = nameOf(s, i);
+      h += '<span><b>' + G.ent(i, 16) + E.ENT[i] + '</b>' + (nm ? '<span class="nm">' + esc(nm) + '</span> · ' : '') + esc(roles[i]) + '</span>';
+    }
+    return h + '</div></div>';
+  }
+  function statusHTML(s) {
+    var tgt = s.cfg.target, scorePct = Math.max(0, Math.min(100, 100 * s.score / tgt)), deckPct = 100 * s.deck.length / s.size0;
+    return '<div class="status">' +
+      '<div class="stat"><div class="k"><span>점수</span><span>목표 ' + tgt + '</span></div><div class="v">' + s.score + '</div><div class="meter"><i style="width:' + scorePct + '%"></i></div></div>' +
+      '<div class="stat"><div class="k"><span>덱 (집중력)</span><span>' + s.size0 + '장 중</span></div><div class="v">' + s.deck.length + '장</div><div class="meter deck"><i style="width:' + deckPct + '%"></i></div></div>' +
+      '<div class="stat gn"><div class="k"><span>장르</span><span>' + s.turn + '턴 지남</span></div><div class="v sm">' + esc(s.genre.name) + '</div><div class="k"><span>유리 ' + E.SPACES[s.genre.space] + ' · 취약 ' + E.DIST_NAMES[s.genre.vuln] + '</span></div></div></div>';
+  }
+  function pilesHTML(s) {
+    var n = s.deck.length, o = s.discard.length;
+    return '<div class="piles"><div class="pile deck' + (n <= 6 ? ' low' : '') + '" role="img" aria-label="덱 ' + n + '장"><b>' + n + '</b><span>덱</span></div>' +
+      '<div class="pile out' + (o ? ' some' : '') + '" role="img" aria-label="버린 카드 ' + o + '장"><b>' + o + '</b><span>버린 카드</span></div></div>';
+  }
+  function seatSlotHTML(s) {
+    var h = '<div class="seat-slot"><div class="zt">지금 자리</div>';
+    if (!s.scene) return h + '<div class="seatcard ghost">아직 자리가 없어요.<br>자리 카드를 먼저 내요.</div></div>';
+    var sid = s.scene.sid, sp = E.spaceOf(sid), po = E.postureOf(sid), sc = C().scenes[sid], isNew = P.seatSeen !== s.scene.card, k, boxes = '';
+    for (k = 0; k < Math.max(sc.L, s.scene.reads); k++) boxes += '<i class="' + (k < s.scene.reads ? (k >= sc.L ? 'over' : 'on') : '') + '"></i>';
+    h += '<div class="seatcard sp' + sp + (isNew ? ' rise' : '') + '">' + G.seat(sid) + '<span class="nm">' + E.sceneName(sid) + '</span><span class="ln">' + E.SPACE_ROLE[sp] + ' 페이지 · ' + E.POSTURE_LENS[po] + '</span>' +
+      '<span class="reads" role="img" aria-label="읽기 ' + s.scene.reads + ' / 한도 ' + sc.L + '">' + boxes + '<span>읽기 ' + s.scene.reads + ' / 한도 ' + sc.L + '</span></span></div>';
+    var ptxt = parseTpl(C().posturePrompts[po]).map(function (x) { return x.t === 'text' ? esc(x.v) : '____(' + esc(x.v) + ')'; }).join('');
+    h += '<p class="pp">이 자리에서 페이지를 읽을 때마다 덧붙일 한 줄 · ' + ptxt + '</p>';
+    if (E.slotsLeft(s, sp) <= 0) h += '<p class="full">' + E.SPACE_ROLE[sp] + ' 칸이 가득 찼어요. ' + (C().slotLock ? '이 자리에서는 더 읽을 수 없어요. 다른 자리 카드로 옮기거나 카드를 버려요.' : '더 읽으면 그 페이지는 ' + overResult(C(), C().slotOverPenalty) + '. 다른 자리 카드로 옮기는 편이 좋아요.') + '</p>';
+    if (s.trace) {
+      h += '<div class="chipline" style="margin-top:8px"><span class="chip trace">흔적: ' + E.DIST_NAMES[s.trace.did] + '</span></div>' +
+        '<p class="trace-note"><b>쓸 때의 조건</b> ' + E.TRACE_INFO[s.trace.did].story + '<br><b>게임 규칙</b> ' + E.TRACE_INFO[s.trace.did].proxy + ' (어기면 −' + C().violationPenalty + '점)<br>다음에 내는 페이지 한 장에만 걸려요. 그 페이지의 \'흔적 한 줄\' 칸에 흔적을 써 주세요.</p>';
+    }
+    return h + '</div>';
+  }
+  function blankTotal(s, e) {
+    var pc = s.cfg.pageCards[e.pi] || { text: '' };
+    return blankCount(pc.text) + blankCount(s.cfg.posturePrompts[E.postureOf(e.sid)]);
+  }
+  function miniHTML(s, e, i) {
+    var n = blankTotal(s, e), f = 0, k;
+    for (k = 0; k < n; k++) if ((e.fills[k] || '').trim()) f++;
+    var tags = '';
+    if (e.bridged) tags += '<span class="tag br">이음</span>';
+    if (e.traceDid >= 0) tags += '<span class="tag ' + (e.traceViol ? 'bad' : 'tr') + '">흔적</span>';
+    return '<button type="button" class="mini sp' + e.type + '" data-edit="' + i + '" aria-label="' + (i + 1) + '번째 ' + E.SPACE_ROLE[e.type] + ' 페이지 쓰기·고치기">' + G.pageBlock(e.type, e.mask) +
+      '<span class="m-top"><span class="m-no">' + (i + 1) + '</span><span class="m-t">' + E.SPACE_ROLE[e.type] + '</span></span><span class="m-f">' + f + '/' + n + '칸 채움</span>' + (tags ? '<span class="m-tags">' + tags + '</span>' : '') + '</button>';
+  }
+  function stripHTML(s) {
+    var h = '<div class="strip"><div class="strip-head"><div class="zt">쌓은 이야기 (' + s.story.length + '장)</div>' +
+      (s.story.length ? '<button type="button" class="btn ghost sm" id="b-read">이어 읽기</button>' : '') + '</div>' + slotsHTML(s);
+    if (!s.story.length) h += '<p class="empty">아직 읽은 페이지가 없어요. 자리 카드로 자리를 잡고, 그 자리에서 읽을 수 있는 페이지 카드를 내 보세요.</p>';
+    else {
+      h += '<div class="minis">';
+      s.story.forEach(function (e, i) { h += miniHTML(s, e, i); });
+      h += '</div>';
+    }
+    return h + '</div>';
+  }
+  function hintPlay(s) { return (P.hint && s.phase === 'play') ? E.suggestPlay(s) : null; }
+  function actionBarHTML(s, sg) {
+    if (s.phase !== 'play') return '<p class="msg">' + (s.phase === 'disturbance' ? '방해를 먼저 처리해요.' : '카드를 뽑는 중이에요.') + '</p>';
+    if (P.sel < 0 || !s.hand[P.sel]) {
+      return '<p class="msg">카드를 골라 보세요.' + (sg ? ' ' + (sg.kind === 'pass' ? '카드 한 장을 버리는' : '카드 한 장을 내는') + ' 쪽을 추천해요.' : '') + '</p>';
+    }
+    var c = s.hand[P.sel], cp = E.canPlay(s, P.sel);
+    var canUse = (c.t === 'scene' || c.t === 'page') && cp.ok;
+    return '<p class="msg">' + esc(previewText(s, P.sel)) + '</p><div class="btnrow">' +
+      (c.t === 'scene' || c.t === 'page' ? '<button type="button" class="btn sm" id="p-play"' + (canUse ? '' : ' disabled') + '>내기</button>' : '') +
+      '<button type="button" class="btn ghost sm" id="p-pass">버리기 (이번 턴 넘김)</button></div>';
+  }
+  function handZoneHTML(s, sg) {
+    var prev = E.lastStory(s), n = 0;
+    var h = '<section class="handzone" aria-label="손패"><div class="zt">손패 (' + s.hand.length + '장)</div><div class="hand" id="hand">';
+    s.hand.forEach(function (c, i) {
+      var unplayable = (c.t === 'page' && s.phase === 'play' && !E.canPlay(s, i).ok), isNew = !seenCards.has(c);
+      h += cardHTML(c, { idx: i, sel: P.sel === i, hint: sg && sg.i === i, hintLabel: sg && sg.kind === 'pass' ? '버리기 추천' : '추천', dim: s.phase !== 'play' || unplayable, showLink: true, prev: prev, flag: pageFlag(s, c), flip: isNew, d: isNew ? n++ : 0 });
+    });
+    if (!s.hand.length) h += '<p class="help">손패가 비었어요.</p>';
+    h += '</div><div class="actionbar" id="actionbar">' + actionBarHTML(s, sg) + '</div>';
+    h += '<div class="row-flex"><label class="toggle"><input type="checkbox" data-hint-toggle' + (P.hint ? ' checked' : '') + '>추천 보기</label></div></section>';
+    return h;
+  }
+  function logBox() {
+    var h = '<details class="logbox" id="logbox"' + (P.logOpen ? ' open' : '') + '><summary>지난 기록</summary><ul class="log">';
+    P.log.slice(0, 12).forEach(function (m) { h += '<li>' + esc(m) + '</li>'; });
+    return h + '</ul></details>';
+  }
+
+  /* ---------- 화면 ---------- */
+  function barHTML() {
+    return '<div class="brand"><span class="mk" aria-hidden="true"><i></i><i></i><i></i></span>읽는 방</div>' +
+      (P.started ? '<nav aria-label="메뉴"><button type="button" class="btn ghost sm" id="b-rules">규칙</button><button type="button" class="btn ghost sm" id="b-new">새 판</button></nav>' : '');
+  }
+  function titleHTML() {
+    var sv = (P.save && P.save.acts && P.save.acts.length) ? P.save : null, tgt = BASE.target, fl = !P.fanShown;
+    P.fanShown = true;
+    var fan = [0, 4, 8].map(function (sid, k) {
+      return '<div class="fcard' + (fl ? ' flip' : '') + '" style="--d:' + k + '">' + G.seat(sid) + '<span>' + E.sceneName(sid) + '</span></div>';
+    }).join('');
+    var resumeLabel = sv && sv.sum && sv.sum.over ? '지난 판 이야기 보기' : '이어서 하기';
+    var resumeNote = sv && sv.sum ? '<p class="resume">' + (sv.sum.over ? (sv.sum.win ? '이긴 판' : '진 판') + ' · ' : '하던 판 · ') + sv.sum.score + '점 · ' + sv.sum.turn + '턴</p>' : '';
+    var h = '<section class="hero"><div><h1>읽는 방</h1><p class="lead">자리를 잡고 페이지를 읽다 보면, 빈칸에 쓴 글이 이야기 한 편으로 남아요. 혼자 하는 카드 게임이에요.</p>' +
+      '<div class="btnrow">' + (sv ? '<button type="button" class="btn big" id="p-resume">' + resumeLabel + '</button><button type="button" class="btn ghost big" id="p-start">새로 시작</button>' : '<button type="button" class="btn big" id="p-start">시작하기</button>') + '</div>' + resumeNote +
+      '</div><div class="fan" aria-hidden="true">' + fan + '</div></section>';
+    h += '<ol class="how">' +
+      '<li><div class="art" aria-hidden="true">' + G.seat(0) + G.seat(4) + '</div><div><h3>자리를 잡아요</h3><p>손에 든 <b>자리 카드</b>를 내면 점수를 받고, 그 자리에서 읽을 수 있는 페이지가 정해져요. 책상은 인물, 침대는 사건, 바닥은 배경 페이지를 읽는 자리예요.</p></div></li>' +
+      '<li><div class="art col" aria-hidden="true">' + G.pageBlock(0, E.mk('A')) + G.pageBlock(2, E.mk('①')) + '</div><div><h3>페이지를 읽어요</h3><p>같은 종류의 <b>페이지 카드</b>를 내면 점수를 얻고 덱이 줄어요. 페이지에는 빈칸이 있어요. 직접 채워 쓰면 한 판이 끝났을 때 이야기가 남아요. 쓰지 않아도 게임은 진행돼요.</p></div></li>' +
+      '<li><div class="art" aria-hidden="true">' + G.dist(0, false) + G.dist(1, false) + '</div><div><h3>방해를 넘겨요</h3><p>핸드폰, 졸음, 바깥 소리 같은 <b>방해</b>가 끼어들어요. 무마 카드로 막거나, 값을 치르거나, \'흔적\'으로 받아서 이야기 속에 남겨요.</p></div></li>' +
+      '<li><div class="art" aria-hidden="true">' + G.verdict(true) + G.verdict(false) + '</div><div><h3>덮을 때까지</h3><p><b>' + tgt + '점</b>에 닿으면 이겨요. 덱(집중력)이 바닥나면 져요. 어느 쪽이든 쌓은 이야기를 책처럼 이어 읽을 수 있어요.</p></div></li></ol>';
+    h += '<details class="rulebox"><summary>규칙 자세히 보기</summary>' + rulesHTML(BASE) + '</details>';
+    h += '<details class="seedbox"><summary>같은 카드 순서로 해 보기 (선택)</summary><p class="help">카드는 매번 무작위로 섞여요. 섞인 순서는 \'판 번호\' 하나로 정해져서, 같은 번호로 시작하면 늘 똑같은 순서로 카드가 나와요. 지난 판을 다시 해 보고 싶을 때만 쓰면 돼요. 비워 두면 매번 새로 섞여요.</p>' +
+      '<div class="btnrow"><label for="p-seed" style="font-size:14px">판 번호</label><input class="txt" style="width:10em" id="p-seed" type="text" inputmode="numeric" placeholder="예: 1234" value=""></div></details>';
+    return h;
+  }
+  function genreHTML(s) {
+    var fr = fresh('genre');
+    var h = '<section class="step"><h2>이야기의 장르를 골라요</h2><p class="help">세 장 중 한 장이에요. 장르는 이야기 전체의 색이 돼요. 장르가 좋아하는 공간의 자리 카드는 보너스를 받고, 취약한 방해는 비용이 늘어요.</p><div class="genre-row">';
+    s.genreOptions.forEach(function (gi, k) {
+      var g = C().genres[gi];
+      h += '<button type="button" class="genre' + (fr ? ' flip' : '') + '"' + (fr ? ' style="--d:' + k + '"' : '') + ' data-genre="' + gi + '">' + G.genre(gi, g.space) + '<b>' + esc(g.name) + '</b><span class="gi"><span class="sq sp' + g.space + 'c"></span>유리한 공간: ' + E.SPACES[g.space] + ' (' + E.SPACE_ROLE[g.space] + ') +' + C().genreBonus + '점</span><span class="gi">취약한 방해: ' + E.DIST_NAMES[g.vuln] + ' (비용 +' + C().vulnPlus + ')</span></button>';
+    });
+    return h + '</div></section>';
+  }
+  function settingHTML(s) {
+    var fr = fresh('setting'), list = s.genre.settings || [];
+    var h = '<section class="step"><h2>설정을 골라요</h2><p class="help">' + esc(s.genre.name) + ' 장르가 펼친 설정 후보예요. 하나를 고르면 이야기에 나올 인물 둘(A, B)과 장소 둘(①, ②)이 정해져요. 이름은 붙여도 되고, 비워 둬도 돼요.</p><div class="setting-row">';
+    list.forEach(function (st, si) {
+      h += '<button type="button" class="setting' + (fr ? ' flip' : '') + '"' + (fr ? ' style="--d:' + si + '"' : '') + ' data-setting="' + si + '" aria-pressed="' + (P.settingSel === si ? 'true' : 'false') + '"><b>' + esc(st.line) + '</b>' +
+        '<span><em>' + G.ent(0, 16) + 'A</em>' + esc(st.A) + '</span><span><em>' + G.ent(1, 16) + 'B</em>' + esc(st.B) + '</span><span><em>' + G.ent(2, 16) + '①</em>' + esc(st.p1) + '</span><span><em>' + G.ent(3, 16) + '②</em>' + esc(st.p2) + '</span></button>';
+    });
+    h += '</div>';
+    var cur = list[P.settingSel] || {};
+    h += '<div class="names">';
+    [['A', 'A', cur.A], ['B', 'B', cur.B], ['p1', '①', cur.p1], ['p2', '②', cur.p2]].forEach(function (x) {
+      h += '<div><label for="nm-' + x[0] + '">' + x[1] + '의 이름 (선택)</label><input class="txt" id="nm-' + x[0] + '" data-name="' + x[0] + '" type="text" maxlength="14" value="' + esc(P.names[x[0]]) + '" placeholder="' + esc(x[2] || '이름 (비워도 돼요)') + '"></div>';
+    });
+    return h + '</div><div class="btnrow"><button type="button" class="btn big" id="p-setting-go"' + (P.settingSel < 0 ? ' disabled' : '') + '>이 설정으로 시작</button></div></section>';
+  }
+  function tableHTML(s) {
+    return statusHTML(s) + castHTML(s) +
+      '<section class="table" aria-label="탁자">' + pilesHTML(s) + seatSlotHTML(s) + stripHTML(s) + '</section>' +
+      handZoneHTML(s, hintPlay(s)) + logBox();
+  }
+  function endHTML(s) {
+    var ending = E.endingName(s), hasFill = s.story.some(function (e) { return e.note || e.fills.some(function (f) { return f && f.trim(); }); });
+    var h = '<div class="result"><div class="res-head">' + G.verdict(s.win) + '<div><div class="verdict">' + (s.win ? '이겼어요' : '졌어요') + ' · ' + s.score + '점 / 목표 ' + s.cfg.target + '점 · ' + s.turn + '턴 · 남은 덱 ' + s.deck.length + '장</div><div class="end">' + ending + '</div></div></div>';
+    if (!s.story.length) h += '<p class="help">쌓은 페이지가 없어요.</p>';
+    else {
+      h += '<div class="bookwrap"><article class="book" data-book aria-label="완성된 이야기">' + bookHTML(s) + '</article>' +
+        '<label class="toggle"><input type="checkbox" id="p-hide"' + (P.hideEmpty ? ' checked' : '') + '>쓰지 않은 칸은 건너뛰고 읽기</label></div>';
+    }
+    h += '<div class="btnrow"><button type="button" class="btn" id="p-restart">새 판 시작</button><button type="button" class="btn ghost" id="p-same">같은 카드 순서로 다시</button>' + (s.story.length ? '<button type="button" class="btn ghost" id="p-copy">이야기 복사</button>' : '') + '</div>';
+    h += '<textarea id="story-out" readonly hidden spellcheck="false" aria-label="완성된 이야기" style="margin-top:10px;min-height:200px;font-size:15px"></textarea>';
+    if (s.story.length) {
+      var open = P.editOpen !== undefined ? P.editOpen : !hasFill;
+      h += '<details class="edit" id="edit-details"' + (open ? ' open' : '') + '><summary>빈칸 채우기 · 고치기</summary><p class="help">여기서 쓰거나 고치면 위의 이야기가 바로 바뀌어요.</p><ol class="frags" style="margin-top:12px">';
+      s.story.forEach(function (e, i) { h += fragHTML(s, e, i); });
+      h += '</ol></details>';
+    }
+    return h + '<p class="help" style="margin-top:14px">이번 판 번호 <b>' + P.seedUsed + '</b> · \'같은 카드 순서로 다시\'를 누르면 이 판과 똑같은 순서로 카드가 나와요.</p></div>';
+  }
+  function endScreen(s) { return statusHTML(s) + castHTML(s) + endHTML(s) + logBox(); }
+
+  /* ---------- 창 (쓰기, 방해, 규칙, 이어 읽기, 새 판 확인) ---------- */
+  function headHTML(title, sub, closable) {
+    return '<div class="sheet-head"><div><h2 id="dlg-t">' + esc(title) + '</h2>' + (sub ? '<p class="sub">' + sub + '</p>' : '') + '</div>' +
+      (closable ? '<button type="button" class="x" id="dlg-x" data-close aria-label="닫기">×</button>' : '') + '</div>';
+  }
+  function writeSpec(s, i) {
+    var e = s.story[i], isNew = P.sheetMode === 'new';
+    var sub = isNew ? esc(P.sheetNote) + '<br>빈칸은 직접 채워 써 보세요. 쓰지 않아도 게임은 진행돼요.' : '쓴 글은 바로 저장돼요. 완성된 이야기에도 그대로 이어져요.';
+    var go = isNew ? (s.over ? '이야기 보기' : '다음 카드 뽑기') : '닫기';
+    return {
+      key: 'sheet:' + i + ':' + P.sheetMode, dismiss: true,
+      inner: headHTML(isNew ? '방금 읽은 페이지' : (i + 1) + '번째 페이지 쓰기·고치기', sub, true) +
+        '<ol class="frags" style="margin-top:10px">' + fragHTML(s, e, i, false) + '</ol>' +
+        '<div class="btnrow"><button type="button" class="btn" id="p-sheet-go">' + go + '</button></div>'
+    };
+  }
+  function distSpec(s) {
+    var d = s.pending, did = d.did, full = E.distCosts(s, did), tr = E.traceCosts(s, did);
+    var rec = P.hint ? E.botDisturb(s, { trace: 'smart' }) : null;
+    function isRec(mode, opt) { return rec && rec.mode === mode && rec.opt === opt; }
+    var hasCtr = E.counterIndex(s, did) >= 0, hasStory = s.story.length > 0, vuln = s.genre.vuln === did;
+    var retN = Math.min(full.ret, s.story.length || full.ret), retT = Math.min(tr.ret, s.story.length || tr.ret);
+    var isNew = !seenCards.has(d);
+    var h = headHTML(E.DIST_NAMES[did] + ' 방해가 왔어요', (vuln ? '장르 ' + esc(s.genre.name) + '에 취약한 방해라서 비용이 ' + C().vulnPlus + '씩 늘었어요. ' : '') + '하나를 골라 처리해요.', false);
+    h += '<div class="dist-panel"><div class="dist-head">' + cardHTML(d, { flip: isNew }) + '<div class="opts" style="flex:1 1 280px;margin-top:0">';
+    if (hasCtr) h += '<div class="opt-group"><div class="opt-list"><button type="button" class="opt ctrbtn' + (rec && rec.use ? ' hint' : '') + '" data-dist="counter"><b>' + E.CTR_NAMES[did] + '</b> 카드로 막기<br><span class="help">카드를 버려요. 비용도 흔적도 없어요.</span></button></div></div>';
+    h += '<div class="opt-group"><div class="gt">그대로 받기</div><div class="opt-list">' +
+      '<button type="button" class="opt' + (isRec('pay', 'score') ? ' hint' : '') + '" data-dist="pay:score">점수 −' + full.score + '</button>' +
+      '<button type="button" class="opt' + (isRec('pay', 'deck') ? ' hint' : '') + '" data-dist="pay:deck">덱 −' + full.deck + '장</button>' +
+      '<button type="button" class="opt' + (isRec('pay', 'return') ? ' hint' : '') + '" data-dist="pay:return"' + (hasStory ? '' : ' disabled') + '>페이지 ' + retN + '장 반납 (−' + retN * C().pagePts + '점)</button></div></div>';
+    h += '<div class="opt-group"><div class="gt">흔적 받기 (비용이 줄고, 다음 페이지에 조건이 붙어요)</div><p class="trace-note">흔적은 방해가 이야기에 남기는 자국이에요. 받으면 비용이 절반으로 줄어요. 대신 다음에 낼 페이지 한 장이 아래 조건을 따라야 하고, 그 페이지에 \'흔적 한 줄\'을 써 넣게 돼요.</p>';
+    if (s.trace) h += '<p class="trace-note">이미 흔적이 하나 있어서 새로 받을 수 없어요.</p>';
+    else {
+      h += '<div class="opt-list">' +
+        '<button type="button" class="opt trbtn' + (isRec('trace', 'score') ? ' hint' : '') + '" data-dist="trace:score">점수 −' + tr.score + '</button>' +
+        '<button type="button" class="opt trbtn' + (isRec('trace', 'deck') ? ' hint' : '') + '" data-dist="trace:deck">덱 −' + tr.deck + '장</button>' +
+        '<button type="button" class="opt trbtn' + (isRec('trace', 'return') ? ' hint' : '') + '" data-dist="trace:return"' + (hasStory ? '' : ' disabled') + '>페이지 ' + retT + '장 반납 (−' + retT * C().pagePts + '점)</button></div>' +
+        '<p class="trace-note"><b>쓸 때의 조건</b> ' + E.TRACE_INFO[did].story + '<br><b>게임 규칙</b> ' + E.TRACE_INFO[did].proxy + ' (어기면 −' + C().violationPenalty + '점)</p>';
+    }
+    h += '</div></div></div><p class="help" style="margin-top:12px"><label class="toggle"><input type="checkbox" data-hint-toggle' + (P.hint ? ' checked' : '') + '>추천 보기</label></p></div>';
+    return { key: 'dist:' + P.acts.length, inner: h };
+  }
+  function layerSpec() {
+    var s = P.s;
+    if (P.dlg === 'restart') return { key: 'dlg:restart', cls: 'narrow', dismiss: true, inner: headHTML('새 판을 시작할까요?', '지금 하던 판은 사라져요. 쓴 글도 함께 사라지니, 남기고 싶다면 먼저 \'이어 읽기\'에서 복사해 두세요.', true) + '<div class="btnrow"><button type="button" class="btn" id="dlg-yes">새 판 시작</button><button type="button" class="btn ghost" data-close>계속 이어서</button></div>' };
+    if (P.dlg === 'rules') return { key: 'dlg:rules', dismiss: true, inner: headHTML('규칙', '', true) + rulesHTML(C()) };
+    if (P.dlg === 'book' && s) {
+      return { key: 'dlg:book', dismiss: true, inner: headHTML('이어 읽기', '지금까지 쌓은 페이지를 책처럼 이어 읽어요. 빈칸에 쓴 글이 문장 속에 들어가요.', true) +
+        '<article class="book" data-book aria-label="지금까지의 이야기">' + bookHTML(s) + '</article>' +
+        '<label class="toggle" style="margin-top:12px"><input type="checkbox" id="p-hide"' + (P.hideEmpty ? ' checked' : '') + '>쓰지 않은 칸은 건너뛰고 읽기</label>' +
+        '<div class="btnrow"><button type="button" class="btn ghost" id="p-copy">이야기 복사</button><button type="button" class="btn" data-close>닫기</button></div>' +
+        '<textarea id="story-out" readonly hidden spellcheck="false" aria-label="지금까지의 이야기" style="margin-top:10px;min-height:160px;font-size:15px"></textarea>' };
+    }
+    if (s && P.sheet >= 0 && s.story[P.sheet]) return writeSpec(s, P.sheet);
+    if (s && s.phase === 'disturbance' && s.pending) return distSpec(s);
+    return null;
+  }
+
+  /* ---------- 그리기 ---------- */
+  function focusKey(el) {
+    if (!el || el === document.body || !el.dataset) return '';
+    var d = el.dataset;
+    if (d.i != null && el.classList.contains('card')) return '.card[data-i="' + d.i + '"]';
+    if (d.genre != null) return '[data-genre="' + d.genre + '"]';
+    if (d.setting != null) return '[data-setting="' + d.setting + '"]';
+    if (d.dist != null) return '[data-dist="' + d.dist + '"]';
+    if (d.edit != null) return '[data-edit="' + d.edit + '"]';
+    if (d.hintToggle != null) return '[data-hint-toggle]';
+    if (el.id) return '#' + el.id;
+    return '';
+  }
+  function render() {
+    var s = P.s, key = !P.started ? 'title' : s.phase === 'genre' ? 'genre' : s.phase === 'setting' ? 'setting' : s.over ? 'end' : 'table';
+    var fk = focusKey(document.activeElement);
+    var oldSheet = $('.sheet'), oldTop = oldSheet ? oldSheet.scrollTop : 0;
+    $('#bar').innerHTML = barHTML();
+    $('#app').innerHTML = key === 'title' ? titleHTML() : key === 'genre' ? genreHTML(s) : key === 'setting' ? settingHTML(s) : key === 'end' ? endScreen(s) : tableHTML(s);
+    var spec = P.started || P.dlg ? layerSpec() : null;
+    var layer = $('#layer'), page = $('#page'), root = document.documentElement;
+    if (spec) {
+      layer.innerHTML = '<div class="ovl" data-key="' + esc(spec.key) + '"><div class="sheet' + (spec.cls ? ' ' + spec.cls : '') + (spec.key === P.layerKey ? ' still' : '') + '" role="dialog" aria-modal="true" aria-labelledby="dlg-t" tabindex="-1">' + spec.inner + '</div></div>';
+      page.setAttribute('inert', ''); root.classList.add('lock');
+    } else {
+      layer.innerHTML = '';
+      page.removeAttribute('inert'); root.classList.remove('lock');
+    }
+    var newLayer = (spec ? spec.key : '') !== P.layerKey;
+    P.layerKey = spec ? spec.key : '';
+    P.layerDismiss = !!(spec && spec.dismiss);
+    if (spec) {
+      var sh = $('.sheet', layer);
+      if (newLayer) { if (sh) sh.focus({ preventScroll: true }); }
+      else if (sh) sh.scrollTop = oldTop;
+    }
+    if (key !== P.screen) { P.screen = key; try { window.scrollTo(0, 0); } catch (e) { /* 무시 */ } }
+    growAll();
+    if (fk && !newLayer) { var el = $(fk); if (el && el.focus) { try { el.focus({ preventScroll: true }); } catch (e) { /* 무시 */ } } }
+    if (P.started && s) {
+      s.hand.forEach(function (c) { seenCards.add(c); });
+      if (s.pending) seenCards.add(s.pending);
+      P.seatSeen = s.scene ? s.scene.card : null;
+      scheduleSave();
+    }
+  }
+
+  /* ---------- 하는 일 ---------- */
+  function afterStep(r) {
+    // 한 번 행동한 뒤 새 카드를 뽑아요 (방해가 나오면 창이 떠요)
+    applyAct({ k: 'adv' });
+    if (r && r.msg) toast(r.msg);
+    render();
+  }
+  function playSelected(kind) {
+    var s = P.s, i = P.sel;
+    if (i < 0 || !s.hand[i] || s.phase !== 'play') return;
+    var c = s.hand[i], k = kind === 'pass' ? 'pass' : (c.t === 'scene' ? 'scene' : 'page');
+    var r = applyAct({ k: k, v: i });
+    if (!r) return;
+    P.sel = -1;
+    if (k === 'page') {
+      // 읽은 페이지에 바로 써 보게 해요. 창을 닫으면 새 카드를 뽑아요.
+      P.sheet = s.story.length - 1; P.sheetMode = 'new'; P.sheetNote = pageSummary(r.info);
+      render();
+    } else afterStep(r);
+  }
+  function closeSheet() {
+    var s = P.s;
+    P.sheet = -1;
+    if (s && s.phase === 'draw') applyAct({ k: 'adv' });
+    render();
+  }
+  function closeTop() {
+    if (P.dlg) { P.dlg = ''; render(); }
+    else if (P.sheet >= 0) closeSheet();
+  }
+  function selectCard(i) {
+    var s = P.s;
+    P.sel = (P.sel === i) ? -1 : i;
+    $$('#hand .card').forEach(function (el) { el.setAttribute('aria-pressed', String(parseInt(el.dataset.i, 10) === P.sel)); });
+    var bar = $('#actionbar');
+    if (bar) bar.innerHTML = actionBarHTML(s, hintPlay(s));
+  }
+  function refreshBook() {
+    $$('[data-book]').forEach(function (b) { b.innerHTML = bookHTML(P.s); });
+  }
+  function copyStory(btn) {
+    var ta = $('#story-out'), txt = bookText(P.s), old = btn.textContent;
+    ta.value = txt;
+    var fail = function () { ta.hidden = false; ta.select(); btn.textContent = '아래 글을 직접 복사해 주세요'; };
+    try {
+      navigator.clipboard.writeText(txt).then(function () { btn.textContent = '복사했어요'; setTimeout(function () { btn.textContent = old; }, 1500); }, fail);
+    } catch (x) { fail(); }
+  }
+
+  var downOvl = false;
+  document.addEventListener('pointerdown', function (e) { downOvl = !!(e.target.classList && e.target.classList.contains('ovl')); }, true);
+  document.addEventListener('click', function (e) {
+    var t = e.target, s = P.s;
+    if (t.classList && t.classList.contains('ovl')) { if (P.layerDismiss && downOvl) closeTop(); return; }
+    var bt = t.closest('button'), id = bt ? bt.id : '';
+    if (t.closest('[data-close]')) { closeTop(); return; }
+    var gb = t.closest('[data-genre]');
+    if (gb && s && s.phase === 'genre') {
+      if (applyAct({ k: 'genre', v: parseInt(gb.dataset.genre, 10) })) { P.settingSel = -1; render(); }
+      return;
+    }
+    var sb = t.closest('[data-setting]');
+    if (sb && s && s.phase === 'setting') { P.settingSel = parseInt(sb.dataset.setting, 10); render(); return; }
+    if (id === 'p-setting-go' && s && s.phase === 'setting' && P.settingSel >= 0) {
+      if (applyAct({ k: 'setting', v: P.settingSel, names: { A: P.names.A, B: P.names.B, p1: P.names.p1, p2: P.names.p2 } })) afterStep(null);
+      return;
+    }
+    if (id === 'p-start') { var sv = $('#p-seed'); startGame(sv ? parseInt(sv.value, 10) : NaN); return; }
+    if (id === 'p-resume' && P.save) { if (!restore(P.save)) toast('저장된 판을 불러오지 못했어요. 새로 시작해 주세요.'); render(); return; }
+    if (id === 'p-restart') { startGame(); return; }
+    if (id === 'p-same') { startGame(P.seedUsed); return; }
+    if (id === 'b-rules') { P.dlg = 'rules'; render(); return; }
+    if (id === 'b-new') {
+      if (s && !s.over && P.acts.length > 0) { P.dlg = 'restart'; render(); } else startGame();
+      return;
+    }
+    if (id === 'dlg-yes') { P.dlg = ''; startGame(); return; }
+    if (!s) return;
+    if (id === 'b-read') { P.dlg = 'book'; render(); return; }
+    if (id === 'p-copy') { copyStory(bt); return; }
+    if (id === 'p-sheet-go') { closeSheet(); return; }
+    var mb = t.closest('[data-edit]');
+    if (mb) { P.sheet = parseInt(mb.dataset.edit, 10); P.sheetMode = 'edit'; P.sheetNote = ''; render(); return; }
+    var cardBtn = t.closest('.card[data-i]');
+    if (cardBtn && s.phase === 'play' && !s.over) { selectCard(parseInt(cardBtn.dataset.i, 10)); return; }
+    var ob = t.closest('[data-dist]');
+    if (ob && s.phase === 'disturbance' && s.pending && !ob.disabled) {
+      var r = applyAct({ k: 'dist', v: ob.dataset.dist });
+      if (r) afterStep(r);
+      return;
+    }
+    if (id === 'p-play') { playSelected('play'); return; }
+    if (id === 'p-pass') { playSelected('pass'); return; }
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.matches && t.matches('[data-hint-toggle]')) { P.hint = t.checked; render(); }
+    else if (t.id === 'p-hide') { P.hideEmpty = t.checked; refreshBook(); scheduleSave(); }
+  });
+  document.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (!d || d.tagName !== 'DETAILS') return;
+    if (d.dataset.frag != null) P.openFrag[d.dataset.frag] = d.open;
+    if (d.id === 'rulebox') P.rulesOpen = d.open;
+    if (d.id === 'logbox') P.logOpen = d.open;
+    if (d.id === 'edit-details') P.editOpen = d.open;
+    if (d.open) growAll();
+  }, true);
+  document.addEventListener('input', function (e) {
+    var t = e.target, d = t.dataset || {};
+    if (d.note != null && P.s && P.s.story[d.note]) { P.s.story[d.note].note = t.value; grow(t); refreshBook(); scheduleSave(); }
+    else if (d.fill != null && P.s) {
+      var pr = d.fill.split(':'), ei = parseInt(pr[0], 10), en = P.s.story[ei];
+      if (en) {
+        en.fills[parseInt(pr[1], 10)] = t.value;
+        [0, 1].forEach(function (w) { $$('[data-sent="' + ei + ':' + w + '"]').forEach(function (el) { el.innerHTML = sentHTML(P.s, ei, w); }); });
+        grow(t); refreshBook(); scheduleSave();
+      }
+    } else if (d.name != null) P.names[d.name] = t.value;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && P.layerDismiss) { e.preventDefault(); closeTop(); }
+  });
+
+  /* ---------- 시작 ---------- */
+  var sv0 = lsGet();
+  if (sv0 && sv0.v === 1 && Array.isArray(sv0.acts) && typeof sv0.seed === 'number') P.save = sv0;
+  window.RR = { state: function () { return P.s; }, acts: function () { return P.acts.slice(); }, hasSave: function () { return !!lsGet(); } };
+  render();
+})();
+
+</script>
+
+</body></html>
